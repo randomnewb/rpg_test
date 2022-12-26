@@ -12,6 +12,39 @@ const Main = () => {
     const zone = useSelector((state) => state.zone);
     const entity = useSelector((state) => state.entity);
 
+    // Generate a random number within a given range
+
+    const randomNumRange = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    // Enemy stats, used when instantiating a new entity
+    const entityStats = [
+        { name: "mob", minHealth: 2, maxHealth: 5 },
+        { name: "tree", minHealth: 2, maxHealth: 3 },
+    ];
+
+    const instanceEnemy = (entity) => {
+        switch (entity) {
+            case "mob":
+                setEntityHealth(
+                    randomNumRange(
+                        entityStats[0].minHealth,
+                        entityStats[0].maxHealth
+                    )
+                );
+            case "tree":
+                setEntityHealth(
+                    randomNumRange(
+                        entityStats[1].minHealth,
+                        entityStats[1].maxHealth
+                    )
+                );
+            default:
+                return null;
+        }
+    };
+
     useEffect(() => {
         console.log("Current zone reducer is", entity);
         setCurrentEntity(entity);
@@ -41,7 +74,7 @@ const Main = () => {
     const interactEntity = (e) => {
         console.log("Interaction is", e.target.id);
         setEntity(e.target.id);
-        setEntityHealth(2);
+        instanceEnemy(e.target.id);
         changeVisiblity();
     };
 
