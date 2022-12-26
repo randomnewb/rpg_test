@@ -28,17 +28,22 @@ const World = () => {
 
     return (
         <div>
-            <span>{JSON.stringify(currentZone)}</span>
-            <button
-                id="1"
-                onClick={changeZone}>
-                Zone 1
-            </button>
-            <button
-                id="2"
-                onClick={changeZone}>
-                Zone 2
-            </button>
+            <div>
+                <span>Zone is: {JSON.stringify(currentZone)}</span>
+            </div>
+
+            <div>
+                <button
+                    id="1"
+                    onClick={changeZone}>
+                    Zone 1
+                </button>
+                <button
+                    id="2"
+                    onClick={changeZone}>
+                    Zone 2
+                </button>
+            </div>
         </div>
     );
 };
