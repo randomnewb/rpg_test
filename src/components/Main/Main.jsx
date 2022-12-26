@@ -7,7 +7,22 @@ const Main = () => {
 
     const [showEntities, setShowEntities] = useState(true);
     const [showInteraction, setShowinteraction] = useState(false);
+    const [currentEntity, setCurrentEntity] = useState(null);
+    const [entityHealth, setEntityHealth] = useState(null);
     const zone = useSelector((state) => state.zone);
+    const entity = useSelector((state) => state.entity);
+
+    useEffect(() => {
+        console.log("Current zone reducer is", entity);
+        setCurrentEntity(entity);
+    }, [entity]);
+
+    const setEntity = (entity) => {
+        dispatch({
+            type: "SET_ENTITY",
+            payload: entity,
+        });
+    };
 
     // Hide entities while engaged in interaction
     const changeEntitiesVisiblity = () => {
@@ -25,12 +40,18 @@ const Main = () => {
 
     const interactEntity = (e) => {
         console.log("Interaction is", e.target.id);
+        setEntity(e.target.id);
+        setEntityHealth(2);
         changeVisiblity();
     };
 
     const performAction = (act) => {
         console.log(act.target.id);
-        changeVisiblity();
+        setEntityHealth(entityHealth - 1);
+
+        if (entityHealth <= 0 || entityHealth === 1) {
+            changeVisiblity();
+        }
     };
 
     return (
@@ -54,7 +75,13 @@ const Main = () => {
             )}
             {showInteraction && (
                 <div id="showInteraction">
-                    <span> Currently interacting with ENTITY</span>
+                    <span>
+                        Currently interacting with{" "}
+                        {JSON.stringify(currentEntity)}
+                        <br />
+                        <br />
+                        Entity Health: {JSON.stringify(entityHealth)}
+                    </span>
                     <button
                         id="attack"
                         onClick={performAction}>
