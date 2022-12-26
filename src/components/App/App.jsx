@@ -14,12 +14,12 @@ import Footer from "../Footer/Footer";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 
 import UserPage from "../UserPage/UserPage";
-import InfoPage from "../InfoPage/InfoPage";
 import LandingPage from "../LandingPage/LandingPage";
 import LoginPage from "../LoginPage/LoginPage";
 import RegisterPage from "../RegisterPage/RegisterPage";
 import World from "../World/World";
 import Inventory from "../Inventory/Inventory";
+import Main from "../Main/Main";
 
 import "./App.css";
 
@@ -58,21 +58,18 @@ function App() {
                     </ProtectedRoute>
 
                     <ProtectedRoute
-                        // logged in shows InfoPage else shows LoginPage
                         exact
-                        path="/info">
-                        <InfoPage />
+                        path="/main">
+                        <Main />
                     </ProtectedRoute>
 
                     <ProtectedRoute
-                        // logged in shows InfoPage else shows LoginPage
                         exact
                         path="/world">
                         <World />
                     </ProtectedRoute>
 
                     <ProtectedRoute
-                        // logged in shows InfoPage else shows LoginPage
                         exact
                         path="/inventory">
                         <Inventory />
