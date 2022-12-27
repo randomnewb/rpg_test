@@ -5,21 +5,18 @@ import { useSelector, useDispatch } from "react-redux";
 const Main = () => {
     const dispatch = useDispatch();
 
-    // Enemy stats, used when instantiating a new entity
-    const entityStats = [
-        { id: 0, value: "mob", minHealth: 2, maxHealth: 5 },
-        { id: 1, value: "tree", minHealth: 2, maxHealth: 3 },
-        { id: 2, value: "thing", minHealth: 2, maxHealth: 3 },
+    // Enemy list, used when instantiating a new entity
+    const entityList = [
+        { id: 0, value: 0, name: "mob", minHealth: 2, maxHealth: 5 },
+        { id: 1, value: 1, name: "tree", minHealth: 2, maxHealth: 3 },
+        { id: 2, value: 2, name: "rock", minHealth: 3, maxHealth: 6 },
     ];
 
     const [showEntities, setShowEntities] = useState(true);
     const [showInteraction, setShowinteraction] = useState(false);
     const [currentEntity, setCurrentEntity] = useState(null);
     const [entityHealth, setEntityHealth] = useState(null);
-    const [spawnEntities, setSpawnEntities] = useState([
-        entityStats[0],
-        entityStats[1],
-    ]);
+    const [spawnEntities, setSpawnEntities] = useState([]);
     const zone = useSelector((state) => state.zone);
     const entity = useSelector((state) => state.entity);
 
@@ -28,54 +25,62 @@ const Main = () => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
 
-    const zoneEntities = [entityStats[0], entityStats[1]];
+    const zoneEntities = [entityList[0], entityList[1], entityList[2]];
 
-    const createEntity = () => {
-        const thing = entityStats[2];
-        console.log("Thing is", thing);
-        setSpawnEntities((spawnEntitites) => [...spawnEntitites, thing]);
+    const spawnRandomEntities = (minSpawn, maxSpawn) => {
+        let numberOfEntities = randomNumRange(minSpawn, maxSpawn);
+        while (numberOfEntities > 0) {
+            numberOfEntities--;
+            let id = numberOfEntities + 1;
+            let entity = entityList[randomNumRange(0, 2)];
 
-        console.log("Entities spawned are now", spawnEntities);
+            setSpawnEntities((spawnEntitites) => [
+                ...spawnEntitites,
+                { entity, id },
+            ]);
+        }
+    };
+
+    const parseEnemy = (e) => {
+        // Entity's name
+        instanceEntityName(e.target.value);
+
+        // This is the entity's entity_id
+        instanceEntityHealth(e.target.value);
     };
 
     const removeEntity = (entityToDelete) => {
-        console.log("entityToDelete", entityToDelete);
-        console.log("Spawned entitites are", spawnEntities);
         setSpawnEntities((spawnEntities) =>
             spawnEntities.filter((e) => e.id !== parseInt(entityToDelete))
         );
     };
 
-    const instanceEntity = (entity) => {
-        switch (entity) {
-            case "mob":
+    const instanceEntityName = (entity) => {
+        for (let i = 0; i < entityList.length; i++) {
+            if (entityList[i].value === parseInt(entity)) {
+                setEntity(entityList[i].name);
+            }
+        }
+    };
+
+    const instanceEntityHealth = (entity) => {
+        for (let i = 0; i < entityList.length; i++) {
+            if (parseInt(entityList[i].value) === parseInt(entity)) {
                 setEntityHealth(
                     randomNumRange(
-                        entityStats[0].minHealth,
-                        entityStats[0].maxHealth
+                        entityList[i].minHealth,
+                        entityList[i].maxHealth
                     )
                 );
-            case "tree":
-                setEntityHealth(
-                    randomNumRange(
-                        entityStats[1].minHealth,
-                        entityStats[1].maxHealth
-                    )
-                );
-            case "thing":
-                setEntityHealth(
-                    randomNumRange(
-                        entityStats[2].minHealth,
-                        entityStats[2].maxHealth
-                    )
-                );
-            default:
-                return null;
+            }
         }
     };
 
     useEffect(() => {
-        console.log("Current zone reducer is", entity);
+        spawnRandomEntities(2, 5);
+    }, []);
+
+    useEffect(() => {
         setCurrentEntity(entity);
     }, [entity]);
 
@@ -101,17 +106,18 @@ const Main = () => {
     };
 
     const interactEntity = (e) => {
-        console.log("Interaction is", e.target.value);
-        setEntity(e.target.value);
-        instanceEntity(e.target.value);
+        parseEnemy(e);
+
+        // This is the unique id of the entity
         removeEntity(e.target.id);
+
+        // Switch to interacting with entities
         changeVisiblity();
     };
 
     // Reduce entityHealth by 1 on click, if the health is below 0 or at 1,
     // switch back to the view that shows all entities
     const performAction = (act) => {
-        console.log(act.target.id);
         setEntityHealth(entityHealth - 1);
 
         if (entityHealth <= 0 || entityHealth === 1) {
@@ -126,24 +132,13 @@ const Main = () => {
             </div>
             {showEntities && (
                 <div id="showEntities">
-                    {/* <button
-                        id="mob"
-                        onClick={interactEntity}>
-                        Monster entity
-                    </button>
-                    <button
-                        id="tree"
-                        onClick={interactEntity}>
-                        Tree entity
-                    </button> */}
                     {spawnEntities.map((entity) => (
                         <button
                             onClick={interactEntity}
                             key={entity.id}
                             id={entity.id}
-                            value={entity.value}>
-                            {" "}
-                            {entity.value} Entity
+                            value={entity.entity.value}>
+                            {entity.entity.name}
                         </button>
                     ))}
                 </div>
@@ -164,7 +159,7 @@ const Main = () => {
                     </button>
                 </div>
             )}
-            <button onClick={createEntity}> Create entity</button>
+            {/* <button onClick={createEntity}> Create entity</button> */}
         </div>
     );
 };
