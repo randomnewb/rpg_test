@@ -3,6 +3,7 @@ import errors from "./errors.reducer";
 import user from "./user.reducer";
 import zone from "./zone.reducer";
 import entity from "./entity.reducer";
+import spawn from "./spawn.reducer";
 
 // rootReducer is the primary reducer for our entire project
 // It bundles up all of the other reducers so our project can use them.
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     user, // will have an id and username if someone is logged in
     zone, // stores zone information
     entity, // stores entity information
+    spawn, // stores spawned entities
 });
 
 export default rootReducer;

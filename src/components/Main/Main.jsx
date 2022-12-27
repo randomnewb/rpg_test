@@ -1,3 +1,13 @@
+/*
+
+We have the entity saved to the entity reducer now
+See JSON.stringify(entity)
+We want to use the entity's information from its reducer
+Any user interactions should also dispatch to the entity reducer
+Later on, we will implement sagas
+
+*/
+
 import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,16 +17,38 @@ const Main = () => {
 
     // Enemy list, used when instantiating a new entity
     const entityList = [
-        { id: 0, value: 0, name: "mob", minHealth: 2, maxHealth: 5 },
-        { id: 1, value: 1, name: "tree", minHealth: 2, maxHealth: 3 },
-        { id: 2, value: 2, name: "rock", minHealth: 3, maxHealth: 6 },
+        {
+            id: 0,
+            value: 0,
+            name: "zombie",
+            type: "mob",
+            minHealth: 2,
+            maxHealth: 5,
+        },
+        {
+            id: 1,
+            value: 1,
+            name: "oak",
+            type: "tree",
+            minHealth: 2,
+            maxHealth: 3,
+        },
+        {
+            id: 2,
+            value: 2,
+            name: "boulder",
+            type: "rock",
+            minHealth: 3,
+            maxHealth: 6,
+        },
     ];
 
     const [showEntities, setShowEntities] = useState(true);
     const [showInteraction, setShowinteraction] = useState(false);
-    const [currentEntity, setCurrentEntity] = useState(null);
-    const [entityHealth, setEntityHealth] = useState(null);
     const [spawnEntities, setSpawnEntities] = useState([]);
+    const [entityProperties, setEntityProperties] = useState("");
+    const [entityHealth, setEntityHealth] = useState(null);
+    const [entityCreated, setEntityCreated] = useState(false);
     const zone = useSelector((state) => state.zone);
     const entity = useSelector((state) => state.entity);
 
@@ -25,7 +57,8 @@ const Main = () => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
 
-    const zoneEntities = [entityList[0], entityList[1], entityList[2]];
+    // Current unused list of entities that can spawn by zone
+    // const zoneEntities = [entityList[0], entityList[1], entityList[2]];
 
     const spawnRandomEntities = (minSpawn, maxSpawn) => {
         let numberOfEntities = randomNumRange(minSpawn, maxSpawn);
@@ -41,28 +74,45 @@ const Main = () => {
         }
     };
 
-    const parseEnemy = (e) => {
-        // Entity's name
-        instanceEntityName(e.target.value);
+    const interactEntity = (e) => {
+        parseEnemy(e);
 
-        // This is the entity's entity_id
+        // Removes the entity based on their unique id
+        // We can do so as the entity is "saved" as the current entity
+        removeEntity(e.target.id);
+
+        // Switch to interacting with entities
+        changeVisiblity();
+
+        // Notifies useEffect to run and dispatches an action to save the entity
+        setEntityCreated(true);
+    };
+
+    const parseEnemy = (e) => {
+        // Entity's properties
+        instanceEntityProperties(e.target.value);
+
+        // Sets the entity's health
         instanceEntityHealth(e.target.value);
     };
 
+    // This removes the entity from list of spawned entities
     const removeEntity = (entityToDelete) => {
         setSpawnEntities((spawnEntities) =>
             spawnEntities.filter((e) => e.id !== parseInt(entityToDelete))
         );
     };
 
-    const instanceEntityName = (entity) => {
+    // This matches the entity the user selects with one from the hard-coded array of entities
+    const instanceEntityProperties = (entity) => {
         for (let i = 0; i < entityList.length; i++) {
             if (entityList[i].value === parseInt(entity)) {
-                setEntity(entityList[i].name);
+                setEntityProperties(entityList[i]);
             }
         }
     };
 
+    // Sets the entity's health to a random amount based on their hard-coded min/max health values
     const instanceEntityHealth = (entity) => {
         for (let i = 0; i < entityList.length; i++) {
             if (parseInt(entityList[i].value) === parseInt(entity)) {
@@ -76,19 +126,22 @@ const Main = () => {
         }
     };
 
+    // Spawns 2 to 5 entities on load
     useEffect(() => {
         spawnRandomEntities(2, 5);
     }, []);
 
     useEffect(() => {
-        setCurrentEntity(entity);
-    }, [entity]);
+        dispatchEntity();
+    }, [entityCreated]);
 
-    const setEntity = (entity) => {
+    const dispatchEntity = () => {
         dispatch({
             type: "SET_ENTITY",
-            payload: entity,
+            payload: { entity: entityProperties, health: entityHealth },
         });
+
+        setEntityCreated(false);
     };
 
     // Hide entities while engaged in interaction
@@ -105,16 +158,6 @@ const Main = () => {
         changeInteractionVisiblity();
     };
 
-    const interactEntity = (e) => {
-        parseEnemy(e);
-
-        // This is the unique id of the entity
-        removeEntity(e.target.id);
-
-        // Switch to interacting with entities
-        changeVisiblity();
-    };
-
     // Reduce entityHealth by 1 on click, if the health is below 0 or at 1,
     // switch back to the view that shows all entities
     const performAction = (act) => {
@@ -122,6 +165,10 @@ const Main = () => {
 
         if (entityHealth <= 0 || entityHealth === 1) {
             changeVisiblity();
+        }
+
+        if (spawnEntities <= 0) {
+            spawnRandomEntities(2, 5);
         }
     };
 
@@ -147,19 +194,37 @@ const Main = () => {
                 <div id="showInteraction">
                     <span>
                         Currently interacting with{" "}
-                        {JSON.stringify(currentEntity)}
+                        {JSON.stringify(entityProperties.name)}
                         <br />
                         <br />
                         Entity Health: {JSON.stringify(entityHealth)}
+                        <br />
+                        <br />
+                        Current entity is: {JSON.stringify(entity)}
                     </span>
-                    <button
-                        id="attack"
-                        onClick={performAction}>
-                        Attack
-                    </button>
+                    {entityProperties.type === "mob" && (
+                        <button
+                            id="attack"
+                            onClick={performAction}>
+                            Attack
+                        </button>
+                    )}
+                    {entityProperties.type === "tree" && (
+                        <button
+                            id="chop"
+                            onClick={performAction}>
+                            Chop
+                        </button>
+                    )}
+                    {entityProperties.type === "rock" && (
+                        <button
+                            id="mine"
+                            onClick={performAction}>
+                            Mine
+                        </button>
+                    )}
                 </div>
             )}
-            {/* <button onClick={createEntity}> Create entity</button> */}
         </div>
     );
 };

@@ -74,9 +74,5 @@ Directory Structure:
 
 ## To-Do's
 
-[ ] Create 2 Zones the user can switch between
-
--   Sort of done, buttons just set a state
-    [ ] Create 1 type of entity/interaction
     [ ] Create a log/narrator
     [ ] Show HP/MP and current Zone
