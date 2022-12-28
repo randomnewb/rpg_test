@@ -27,13 +27,42 @@ import { createTheme, ThemeProvider } from "@mui/material";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#ababab",
+      main: "#ead4aa",
     },
     secondary: {
       main: "#efefef",
     },
   },
+
+  components: {
+    MuiButton: {
+      defaultProps: {
+        variant: "contained",
+        sx: {
+          "&:hover": {
+            color: "#181425",
+            backgroundColor: "#e4a672",
+          },
+        },
+      },
+    },
+  },
 });
+
+// [
+//   {
+//     '&:hover': {
+//       color: 'red',
+//       backgroundColor: 'white',
+//     },
+//   },
+//   foo && {
+//     '&:hover': { backgroundColor: 'grey' },
+//   },
+//   bar && {
+//     '&:hover': { backgroundColor: 'yellow' },
+//   },
+// ]
 
 function App() {
   const dispatch = useDispatch();
