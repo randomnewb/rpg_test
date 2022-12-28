@@ -181,6 +181,7 @@ const Main = () => {
               key={entity.id}
               id={entity.id}
               value={entity.entity.value}
+              color="normal"
             >
               {entity.entity.name}
             </Button>
@@ -199,29 +200,17 @@ const Main = () => {
             {/* Current entity is: {JSON.stringify(entity)} */}
           </span>
           {entityProperties.type === "mob" && (
-            <Button
-              id="attack"
-              onClick={performAction}
-              sx={{ backgroundColor: "#a22633" }}
-            >
+            <Button id="attack" onClick={performAction}>
               Attack
             </Button>
           )}
           {entityProperties.type === "tree" && (
-            <Button
-              id="chop"
-              onClick={performAction}
-              sx={{ backgroundColor: "#265c42" }}
-            >
+            <Button id="chop" onClick={performAction}>
               Chop
             </Button>
           )}
           {entityProperties.type === "rock" && (
-            <Button
-              id="mine"
-              onClick={performAction}
-              sx={{ backgroundColor: "#5a6988" }}
-            >
+            <Button id="mine" onClick={performAction}>
               Mine
             </Button>
           )}

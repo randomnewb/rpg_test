@@ -27,10 +27,22 @@ import { createTheme, ThemeProvider } from "@mui/material";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#ead4aa",
+      main: "#c0cbdc",
     },
     secondary: {
-      main: "#efefef",
+      main: "#ead4aa",
+    },
+    normal: {
+      main: "#e4a672",
+    },
+    woodcutting: {
+      main: "#b86f50",
+    },
+    mining: {
+      main: "#c0cbdc",
+    },
+    attacking: {
+      main: "#e43b44",
     },
   },
 
@@ -41,7 +53,7 @@ const theme = createTheme({
         sx: {
           "&:hover": {
             color: "#181425",
-            backgroundColor: "#e4a672",
+            backgroundColor: "#00ff00",
           },
         },
       },
