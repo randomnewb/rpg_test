@@ -11,6 +11,7 @@ Later on, we will implement sagas
 import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Button } from "@mui/material";
 
 const Main = () => {
     const dispatch = useDispatch();
@@ -176,6 +177,7 @@ const Main = () => {
         <div>
             <div>
                 <span>Zone is: {JSON.stringify(zone)}</span>
+                {/* <span>{JSON.stringify(spawnEntities)}</span> */}
             </div>
             {showEntities && (
                 <div id="showEntities">
@@ -200,7 +202,7 @@ const Main = () => {
                         Entity Health: {JSON.stringify(entityHealth)}
                         <br />
                         <br />
-                        Current entity is: {JSON.stringify(entity)}
+                        {/* Current entity is: {JSON.stringify(entity)} */}
                     </span>
                     {entityProperties.type === "mob" && (
                         <button
@@ -225,6 +227,7 @@ const Main = () => {
                     )}
                 </div>
             )}
+            <Button color="primary">Test</Button>
         </div>
     );
 };
