@@ -187,7 +187,8 @@ const Main = () => {
                             key={entity.id}
                             id={entity.id}
                             value={entity.entity.value}
-                            variant="blue">
+                            // variant="blue"
+                        >
                             {entity.entity.name}
                         </Button>
                     ))}
