@@ -1,7 +1,8 @@
 CREATE TABLE "user" (
     "id" SERIAL PRIMARY KEY,
     "username" VARCHAR (80) UNIQUE NOT NULL,
-    "password" VARCHAR (1000) NOT NULL
+    "password" VARCHAR (1000) NOT NULL,
+	"current_zone" INT REFERENCES "zone"
 );
 
 CREATE TABLE "entity" (
@@ -10,6 +11,11 @@ CREATE TABLE "entity" (
 );
 
 CREATE TABLE "type" (
+	"id" SERIAL PRIMARY KEY,
+	"description" VARCHAR (255)
+);
+
+CREATE TABLE "zone" (
 	"id" SERIAL PRIMARY KEY,
 	"description" VARCHAR (255)
 );
@@ -34,9 +40,11 @@ CREATE TABLE "stat" (
 	"resistance" INT DEFAULT 0
 );
 
+INSERT INTO "zone" ("description")
+VALUES ('Forest'), ('Mountain');
+
 INSERT INTO "type" ("description")
 VALUES ('mob'), ('woodcutting'), ('mining');
-
 
 INSERT INTO "entity" ("name")
 VALUES ('Zombie'), ('Oak Tree'), ('Boulder');

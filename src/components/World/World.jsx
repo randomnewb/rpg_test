@@ -7,16 +7,21 @@ const World = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const zone = useSelector((state) => state.zone);
+  const zone = useSelector((store) => store.zone);
+  const user = useSelector((store) => store.user);
   const [currentZone, setCurrentZone] = useState(zone);
 
   useEffect(() => {
-    setCurrentZone(zone);
+    console.log("What is user from store", user);
+  }, []);
+
+  useEffect(() => {
+    setCurrentZone(user.current_zone);
   }, [zone]);
 
   const setZone = (zone) => {
     dispatch({
-      type: "SET_ZONE",
+      type: "UPDATE_CURRENT_USER_ZONE",
       payload: zone,
     });
   };

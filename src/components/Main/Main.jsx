@@ -1,3 +1,13 @@
+/*
+
+- Entities data needs to come from the database/server
+- Entitites need to be created on the server side and fed to the client
+- Currently spawned entities need to come from the server and be updated back and forth between the client and the server
+- playerState needs to come from the server
+- Zone needs to come from the server
+
+*/
+
 import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -54,10 +64,11 @@ const Main = () => {
   const [entityCreated, setEntityCreated] = useState(false);
 
   // Store
-  const zone = useSelector((state) => state.zone);
-  const entity = useSelector((state) => state.entity);
-  const spawn = useSelector((state) => state.spawn);
-  const playerState = useSelector((state) => state.playerState);
+  const zone = useSelector((store) => store.zone);
+  const entity = useSelector((store) => store.entity);
+  const spawn = useSelector((store) => store.spawn);
+  const playerState = useSelector((store) => store.playerState);
+  const user = useSelector((store) => store.user);
 
   // Generate a random number within a given range
   const randomNumRange = (min, max) => {
@@ -66,6 +77,12 @@ const Main = () => {
 
   // Current unused list of entities that can spawn by zone
   // const zoneEntities = [entityList[0], entityList[1], entityList[2]];
+
+  // Updates the user's current zone on page refresh
+
+  useEffect(() => {
+    setCurrentZone(user.current_zone);
+  }, [zone]);
 
   const spawnRandomEntities = (minSpawn, maxSpawn) => {
     let numberOfEntities = randomNumRange(minSpawn, maxSpawn);
@@ -129,8 +146,12 @@ const Main = () => {
   };
 
   useEffect(() => {
-    setCurrentZone(id);
-  }, [id]);
+    dispatch({ type: "FETCH_ZONE", payload: id });
+  }, [dispatch]);
+
+  // useEffect(() => {
+  //   setCurrentZone(zone);
+  // }, [zone]);
 
   useEffect(() => {
     setCurrentEntity(entity);
@@ -232,8 +253,9 @@ const Main = () => {
   return (
     <div>
       <div>
-        <span>Zone is: {JSON.stringify(currentZone)}</span>
-        <span>Zone reducer is: {JSON.stringify(zone)}</span>
+        <span>The current zone is: {JSON.stringify(currentZone)}</span>
+        <br />
+        <br />
         <span>
           Current Player State is: {JSON.stringify(currentPlayerState)}
         </span>
@@ -252,22 +274,10 @@ const Main = () => {
               {entity.entity.name}
             </Button>
           ))}
-
-          {JSON.stringify(playerState)}
         </div>
       )}
       {showInteraction && (
         <div id="showInteraction">
-          <span>
-            Currently interacting with {JSON.stringify(entity.properties.name)}
-            <br />
-            <br />
-            Entity Health: {JSON.stringify(entity.health)}
-            <br />
-            <br />
-            {/* Current entity is: {JSON.stringify(entity)} */}
-            {JSON.stringify(playerState)}
-          </span>
           {entityProperties.type === "mob" && (
             <Button id="attack" onClick={performAction}>
               Attack
@@ -283,6 +293,16 @@ const Main = () => {
               Mine
             </Button>
           )}
+          <span>
+            Currently interacting with {JSON.stringify(entity.properties.name)}
+            <br />
+            <br />
+            Entity Health: {JSON.stringify(entity.health)}
+            <br />
+            <br />
+            {/* Current entity is: {JSON.stringify(entity)} */}
+            {JSON.stringify(playerState)}
+          </span>
         </div>
       )}
     </div>
