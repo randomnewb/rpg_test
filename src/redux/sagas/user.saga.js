@@ -30,8 +30,8 @@ function* fetchUser() {
 
 function* setCurrentUserZone(action) {
   try {
-    const currentZone = yield axios.put(`/api/user/zone/${action.payload}`);
-    yield put({ type: "SET_CURRENT_USER_ZONE", payload: currentZone.data });
+    yield axios.put(`/api/user/zone/${action.payload}`);
+    yield put({ type: "FETCH_USER" });
   } catch (e) {
     console.log("Failed to set current zone", e);
     alert("Couldn't update current zone");

@@ -8,20 +8,32 @@ const userStrategy = require("../strategies/user.strategy");
 
 const router = express.Router();
 
-router.put("/zone/:id", rejectUnauthenticated, (req, res) => {
-  console.log("req.params is", req.params.id, "req.user is", req.user.id);
-  const sql = `UPDATE "user"
-  SET "current_zone" = $1
-  WHERE "id" = $2;`;
-  pool
-    .query(sql, [req.params.id, req.user.id])
-    .then((result) => {
-      res.sendStatus(201);
-    })
-    .catch((e) => {
-      console.log(e);
-      res.sendStatus(500);
-    });
+/**
+ * UPDATE current zone for user
+ */
+
+router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
+  const db = await pool.connect();
+
+  try {
+    await db.query("BEGIN");
+    console.log("req.params is", req.params.id, "req.user is", req.user.id);
+
+    const sql = `UPDATE "user"
+    SET "current_zone" = $1
+    WHERE "id" = $2;`;
+
+    await db.query(sql, [req.params.id, req.user.id]);
+    await db.query("COMMIT");
+
+    res.sendStatus(201);
+  } catch (e) {
+    await db.query("ROLLBACK");
+    console.log("Error updating zone", e);
+    res.sendStatus(500);
+  } finally {
+    db.release();
+  }
 });
 
 // Handles Ajax request for user information if user is authenticated
