@@ -1,3 +1,8 @@
+CREATE TABLE "zone" (
+	"id" SERIAL PRIMARY KEY,
+	"description" VARCHAR (255)
+);
+
 CREATE TABLE "user" (
     "id" SERIAL PRIMARY KEY,
     "username" VARCHAR (80) UNIQUE NOT NULL,
@@ -11,11 +16,6 @@ CREATE TABLE "entity" (
 );
 
 CREATE TABLE "type" (
-	"id" SERIAL PRIMARY KEY,
-	"description" VARCHAR (255)
-);
-
-CREATE TABLE "zone" (
 	"id" SERIAL PRIMARY KEY,
 	"description" VARCHAR (255)
 );
