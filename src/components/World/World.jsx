@@ -28,7 +28,7 @@ const World = () => {
 
   const changeZone = (e) => {
     setZone(e.target.id);
-    history.push(`/world/${e.target.id}`);
+    history.push(`/zone/`);
   };
 
   return (

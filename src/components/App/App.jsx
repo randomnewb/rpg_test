@@ -140,7 +140,7 @@ function App() {
               <World />
             </ProtectedRoute>
 
-            <ProtectedRoute exact path="/world/:id">
+            <ProtectedRoute exact path="/zone">
               <Main />
             </ProtectedRoute>
 

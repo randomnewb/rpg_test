@@ -17,7 +17,6 @@ router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
 
   try {
     await db.query("BEGIN");
-    console.log("req.params is", req.params.id, "req.user is", req.user.id);
 
     const sql = `UPDATE "user"
     SET "current_zone" = $1

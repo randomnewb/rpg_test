@@ -16,7 +16,6 @@ import { Button } from "@mui/material";
 
 const Main = () => {
   const dispatch = useDispatch();
-  const { id } = useParams();
 
   // Enemy list, used when instantiating a new entity
   const entityList = [
@@ -51,15 +50,15 @@ const Main = () => {
   const [showInteraction, setShowInteraction] = useState(false);
 
   // Holds the currently spawned entities
-  const [spawnEntities, setSpawnEntities] = useState(spawn);
+  // const [spawnEntities, setSpawnEntities] = useState(spawn);
 
   // Holds current information
-  const [currentEntity, setCurrentEntity] = useState(entity);
+  // const [currentEntity, setCurrentEntity] = useState(entity);
   const [currentZone, setCurrentZone] = useState(zone);
   const [currentPlayerState, setCurrentPlayerState] = useState(playerState);
 
   // For holding the entities we have instantiated
-  const [entityProperties, setEntityProperties] = useState("");
+  // const [entityProperties, setEntityProperties] = useState("");
   const [entityHealth, setEntityHealth] = useState(null);
   const [entityCreated, setEntityCreated] = useState(false);
 
@@ -81,12 +80,14 @@ const Main = () => {
   // Updates the user's current zone on page refresh
 
   useEffect(() => {
-    setCurrentZone(user.current_zone);
-  }, [zone]);
-
-  useEffect(() => {
-    setSpawnEntities(spawn);
+    dispatch({ type: "FETCH_ZONE", payload: user.current_zone });
+    dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
   }, []);
+
+  // useEffect(() => {
+  //   console.log("current spawn", spawn);
+  //   setSpawnEntities(spawn);
+  // }, []);
 
   // const spawnRandomEntities = (minSpawn, maxSpawn) => {
   //   let numberOfEntities = randomNumRange(minSpawn, maxSpawn);
@@ -100,34 +101,34 @@ const Main = () => {
   //   dispatchSpawn();
   // };
 
-  const interactEntity = (e) => {
-    parseEnemy(e);
+  // const interactEntity = (e) => {
+  //   parseEnemy(e);
 
-    // Removes the entity based on their unique id
-    // We can do so as the entity is "saved" as the current entity
-    removeEntity(e.target.id);
+  //   // Removes the entity based on their unique id
+  //   // We can do so as the entity is "saved" as the current entity
+  //   removeEntity(e.target.id);
 
-    // Switch to interacting with entities
-    changeVisiblity();
+  //   // Switch to interacting with entities
+  //   changeVisiblity();
 
-    // Notifies useEffect to run and dispatches an action to save the entity
-    setEntityCreated(true);
-  };
+  //   // Notifies useEffect to run and dispatches an action to save the entity
+  //   setEntityCreated(true);
+  // };
 
-  const parseEnemy = (e) => {
-    // Entity's properties
-    instanceEntityProperties(e.target.value);
+  // const parseEnemy = (e) => {
+  //   // Entity's properties
+  //   instanceEntityProperties(e.target.value);
 
-    // Sets the entity's health
-    instanceEntityHealth(e.target.value);
-  };
+  //   // Sets the entity's health
+  //   instanceEntityHealth(e.target.value);
+  // };
 
   // This removes the entity from list of spawned entities
-  const removeEntity = (entityToDelete) => {
-    setSpawnEntities((spawnEntities) =>
-      spawnEntities.filter((e) => e.id !== parseInt(entityToDelete))
-    );
-  };
+  // const removeEntity = (entityToDelete) => {
+  //   setSpawnEntities((spawnEntities) =>
+  //     spawnEntities.filter((e) => e.id !== parseInt(entityToDelete))
+  //   );
+  // };
 
   // This matches the entity the user selects with one from the hard-coded array of entities
   // const instanceEntityProperties = (entity) => {
@@ -149,17 +150,13 @@ const Main = () => {
   //   }
   // };
 
-  useEffect(() => {
-    dispatch({ type: "FETCH_ZONE", payload: id });
-  }, [dispatch]);
-
   // useEffect(() => {
   //   setCurrentZone(zone);
   // }, [zone]);
 
-  useEffect(() => {
-    setCurrentEntity(entity);
-  }, [entity]);
+  // useEffect(() => {
+  //   setCurrentEntity(entity);
+  // }, [entity]);
 
   useEffect(() => {
     setCurrentPlayerState(playerState);
@@ -209,55 +206,55 @@ const Main = () => {
   // };
 
   // Hide entities while engaged in interaction
-  const changeEntitiesVisiblity = () => {
-    setShowEntities(!showEntities);
-  };
+  // const changeEntitiesVisiblity = () => {
+  //   setShowEntities(!showEntities);
+  // };
 
-  const changeInteractionVisiblity = () => {
-    setShowInteraction(!showInteraction);
-  };
+  // const changeInteractionVisiblity = () => {
+  //   setShowInteraction(!showInteraction);
+  // };
 
-  const changeVisiblity = () => {
-    changeEntitiesVisiblity();
-    changeInteractionVisiblity();
-  };
+  // const changeVisiblity = () => {
+  //   changeEntitiesVisiblity();
+  //   changeInteractionVisiblity();
+  // };
 
   // Reduce entityHealth by 1 on click, if the health is below 0 or at 1,
   // switch back to the view that shows all entities
-  const performAction = (act) => {
-    let damage = 1;
+  // const performAction = (act) => {
+  //   let damage = 1;
 
-    if (playerState.interaction !== "engaged") {
-      dispatch({
-        type: "SET_PLAYER_STATE",
-        payload: "engaged",
-      });
-    }
-    dispatch({
-      type: "SET_ENTITY_HEALTH",
-      payload: damage,
-    });
+  //   if (playerState.interaction !== "engaged") {
+  //     dispatch({
+  //       type: "SET_PLAYER_STATE",
+  //       payload: "engaged",
+  //     });
+  //   }
+  //   dispatch({
+  //     type: "SET_ENTITY_HEALTH",
+  //     payload: damage,
+  //   });
 
-    if (entity.health <= 0) {
-      dispatch({
-        type: "CLEAR_ENTITY",
-      });
+  //   if (entity.health <= 0) {
+  //     dispatch({
+  //       type: "CLEAR_ENTITY",
+  //     });
 
-      dispatch({
-        type: "SET_PLAYER_STATE",
-        payload: "observing",
-      });
-    }
+  //     dispatch({
+  //       type: "SET_PLAYER_STATE",
+  //       payload: "observing",
+  //     });
+  //   }
 
-    // if (spawnEntities <= 0) {
-    //   spawnRandomEntities(2, 5);
-    // }
-  };
+  //   // if (spawnEntities <= 0) {
+  //   //   spawnRandomEntities(2, 5);
+  //   // }
+  // };
 
   return (
     <div>
       <div>
-        <span>The current zone is: {JSON.stringify(currentZone)}</span>
+        <span>The current zone is: {JSON.stringify(user.current_zone)}</span>
         <br />
         <br />
         <span>
@@ -267,10 +264,11 @@ const Main = () => {
       </div>
       {showEntities && (
         <div id="showEntities">
-          {JSON.stringify(spawnEntities)}
-          {/* {spawnEntities.map((entity) => (
+          {JSON.stringify(spawn)}
+
+          {spawn.map((entity) => (
             <Button
-              onClick={interactEntity}
+              // onClick={interactEntity}
               key={entity.id}
               id={entity.id}
               value={entity.current_health}
@@ -278,12 +276,12 @@ const Main = () => {
             >
               {entity.name}
             </Button>
-          ))} */}
+          ))}
         </div>
       )}
       {showInteraction && (
         <div id="showInteraction">
-          {entityProperties.type === "mob" && (
+          {/* {entityProperties.type === "mob" && (
             <Button id="attack" onClick={performAction}>
               Attack
             </Button>
@@ -297,16 +295,16 @@ const Main = () => {
             <Button id="mine" onClick={performAction}>
               Mine
             </Button>
-          )}
+          )} */}
           <span>
-            Currently interacting with {JSON.stringify(entity.properties.name)}
+            {/* Currently interacting with {JSON.stringify(entity.properties.name)} */}
             <br />
             <br />
-            Entity Health: {JSON.stringify(entity.health)}
+            {/* Entity Health: {JSON.stringify(entity.health)} */}
             <br />
             <br />
             {/* Current entity is: {JSON.stringify(entity)} */}
-            {JSON.stringify(playerState)}
+            {/* {JSON.stringify(playerState)} */}
           </span>
         </div>
       )}
