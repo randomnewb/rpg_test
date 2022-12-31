@@ -1,10 +1,10 @@
 /*
 
-- Entities data needs to come from the database/server
+- [DONE] Entities data needs to come from the database/server
 - Entitites need to be created on the server side and fed to the client
 - Currently spawned entities need to come from the server and be updated back and forth between the client and the server
 - playerState needs to come from the server
-- Zone needs to come from the server
+- [DONE] Zone needs to come from the server
 
 */
 
@@ -51,7 +51,7 @@ const Main = () => {
   const [showInteraction, setShowInteraction] = useState(false);
 
   // Holds the currently spawned entities
-  const [spawnEntities, setSpawnEntities] = useState([]);
+  const [spawnEntities, setSpawnEntities] = useState(spawn);
 
   // Holds current information
   const [currentEntity, setCurrentEntity] = useState(entity);
@@ -71,9 +71,9 @@ const Main = () => {
   const user = useSelector((store) => store.user);
 
   // Generate a random number within a given range
-  const randomNumRange = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
+  // const randomNumRange = (min, max) => {
+  //   return Math.floor(Math.random() * (max - min + 1)) + min;
+  // };
 
   // Current unused list of entities that can spawn by zone
   // const zoneEntities = [entityList[0], entityList[1], entityList[2]];
@@ -84,17 +84,21 @@ const Main = () => {
     setCurrentZone(user.current_zone);
   }, [zone]);
 
-  const spawnRandomEntities = (minSpawn, maxSpawn) => {
-    let numberOfEntities = randomNumRange(minSpawn, maxSpawn);
-    while (numberOfEntities > 0) {
-      numberOfEntities--;
-      let id = numberOfEntities + 1;
-      let entity = entityList[randomNumRange(0, 2)];
+  useEffect(() => {
+    setSpawnEntities(spawn);
+  }, []);
 
-      setSpawnEntities((spawnEntitites) => [...spawnEntitites, { entity, id }]);
-    }
-    dispatchSpawn();
-  };
+  // const spawnRandomEntities = (minSpawn, maxSpawn) => {
+  //   let numberOfEntities = randomNumRange(minSpawn, maxSpawn);
+  //   while (numberOfEntities > 0) {
+  //     numberOfEntities--;
+  //     let id = numberOfEntities + 1;
+  //     let entity = entityList[randomNumRange(0, 2)];
+
+  //     setSpawnEntities((spawnEntitites) => [...spawnEntitites, { entity, id }]);
+  //   }
+  //   dispatchSpawn();
+  // };
 
   const interactEntity = (e) => {
     parseEnemy(e);
@@ -126,24 +130,24 @@ const Main = () => {
   };
 
   // This matches the entity the user selects with one from the hard-coded array of entities
-  const instanceEntityProperties = (entity) => {
-    for (let i = 0; i < entityList.length; i++) {
-      if (entityList[i].value === parseInt(entity)) {
-        setEntityProperties(entityList[i]);
-      }
-    }
-  };
+  // const instanceEntityProperties = (entity) => {
+  //   for (let i = 0; i < entityList.length; i++) {
+  //     if (entityList[i].value === parseInt(entity)) {
+  //       setEntityProperties(entityList[i]);
+  //     }
+  //   }
+  // };
 
   // Sets the entity's health to a random amount based on their hard-coded min/max health values
-  const instanceEntityHealth = (entity) => {
-    for (let i = 0; i < entityList.length; i++) {
-      if (parseInt(entityList[i].value) === parseInt(entity)) {
-        setEntityHealth(
-          randomNumRange(entityList[i].minHealth, entityList[i].maxHealth)
-        );
-      }
-    }
-  };
+  // const instanceEntityHealth = (entity) => {
+  //   for (let i = 0; i < entityList.length; i++) {
+  //     if (parseInt(entityList[i].value) === parseInt(entity)) {
+  //       setEntityHealth(
+  //         randomNumRange(entityList[i].minHealth, entityList[i].maxHealth)
+  //       );
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     dispatch({ type: "FETCH_ZONE", payload: id });
@@ -180,29 +184,29 @@ const Main = () => {
   }, [playerState]);
 
   // Spawns 2 to 5 entities on load
-  useEffect(() => {
-    spawnRandomEntities(2, 5);
-  }, []);
+  // useEffect(() => {
+  //   spawnRandomEntities(2, 5);
+  // }, []);
 
-  const dispatchEntity = () => {
-    dispatch({
-      type: "SET_ENTITY",
-      payload: { properties: entityProperties, health: entityHealth },
-    });
+  // const dispatchEntity = () => {
+  //   dispatch({
+  //     type: "SET_ENTITY",
+  //     payload: { properties: entityProperties, health: entityHealth },
+  //   });
 
-    setEntityCreated(false);
-  };
+  //   setEntityCreated(false);
+  // };
 
-  useEffect(() => {
-    dispatchEntity();
-  }, [entityCreated]);
+  // useEffect(() => {
+  //   dispatchEntity();
+  // }, [entityCreated]);
 
-  const dispatchSpawn = () => {
-    dispatch({
-      type: "SET_SPAWN",
-      payload: spawnEntities,
-    });
-  };
+  // const dispatchSpawn = () => {
+  //   dispatch({
+  //     type: "SET_SPAWN",
+  //     payload: spawnEntities,
+  //   });
+  // };
 
   // Hide entities while engaged in interaction
   const changeEntitiesVisiblity = () => {
@@ -245,9 +249,9 @@ const Main = () => {
       });
     }
 
-    if (spawnEntities <= 0) {
-      spawnRandomEntities(2, 5);
-    }
+    // if (spawnEntities <= 0) {
+    //   spawnRandomEntities(2, 5);
+    // }
   };
 
   return (
@@ -263,17 +267,18 @@ const Main = () => {
       </div>
       {showEntities && (
         <div id="showEntities">
-          {spawnEntities.map((entity) => (
+          {JSON.stringify(spawnEntities)}
+          {/* {spawnEntities.map((entity) => (
             <Button
               onClick={interactEntity}
               key={entity.id}
               id={entity.id}
-              value={entity.entity.value}
+              value={entity.current_health}
               // variant="blue"
             >
-              {entity.entity.name}
+              {entity.name}
             </Button>
-          ))}
+          ))} */}
         </div>
       )}
       {showInteraction && (

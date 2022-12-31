@@ -12,16 +12,16 @@ const World = () => {
   const [currentZone, setCurrentZone] = useState(zone);
 
   useEffect(() => {
-    console.log("What is user from store", user);
-  }, []);
-
-  useEffect(() => {
     setCurrentZone(user.current_zone);
   }, [zone]);
 
   const setZone = (zone) => {
     dispatch({
       type: "UPDATE_CURRENT_USER_ZONE",
+      payload: zone,
+    });
+    dispatch({
+      type: "FETCH_SPAWN",
       payload: zone,
     });
   };

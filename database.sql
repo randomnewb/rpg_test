@@ -40,6 +40,17 @@ CREATE TABLE "stat" (
 	"resistance" INT DEFAULT 0
 );
 
+CREATE TABLE "spawn" (
+	"id" SERIAL PRIMARY KEY,
+	"entity_id" INT references "entity",
+	"current_health" INT
+);
+
+CREATE TABLE "spawn_zone" (
+	"spawn_id" INT references "spawn",
+	"zone_id" INT references "zone"
+);
+
 INSERT INTO "zone" ("description")
 VALUES ('Forest'), ('Mountain');
 
@@ -51,3 +62,15 @@ VALUES ('Zombie'), ('Oak Tree'), ('Boulder');
 
 INSERT INTO "stat" ("entity_id", "type_id", "min_health", "max_health")
 VALUES(1, 1, 2, 5), (2, 2, 2, 3), (3, 3, 3, 6);
+
+INSERT INTO "spawn" ("entity_id", "current_health")
+VALUES (1, 5), (2, 3), (3, 4);
+
+INSERT INTO "spawn" ("entity_id", "current_health")
+VALUES (1, 4), (2, 4), (3, 5);
+
+INSERT INTO "spawn_zone" ("spawn_id", "zone_id")
+VALUES (1, 1), (2, 1), (3, 1);
+
+INSERT INTO "spawn_zone" ("spawn_id", "zone_id")
+VALUES (4, 2), (5, 2), (6, 2);
