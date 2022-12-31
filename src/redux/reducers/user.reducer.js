@@ -5,7 +5,7 @@ const userReducer = (state = {}, action) => {
     case "UNSET_USER":
       return {};
     case "SET_CURRENT_USER_ZONE":
-      return { ...state, currentZone: action.payload };
+      return { currentZone: action.payload };
     default:
       return state;
   }

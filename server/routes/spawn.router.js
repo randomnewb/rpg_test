@@ -13,11 +13,12 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
   SELECT spawn.id, type.description, entity.name, spawn.current_health 
   FROM stat, type, spawn_zone, spawn, entity
   WHERE 
-	zone_id = $1
-	AND	stat.type_id = type.id
-	AND	spawn_zone.spawn_id = spawn.id
-	AND spawn.entity_id = entity.id
-	AND stat.id = spawn.id;`;
+    zone_id = $1
+    AND	stat.type_id = type.id
+    AND	spawn_zone.spawn_id = spawn.id
+    AND spawn.entity_id = entity.id
+    AND stat.id = entity.id;
+  `;
   pool
     .query(sql, [req.params.id])
     .then((result) => {
