@@ -6,7 +6,7 @@ const {
 } = require("../modules/authentication-middleware");
 
 /**
- * GET route template
+ * FETCH current entities in a zone
  */
 router.get("/:id", rejectUnauthenticated, (req, res) => {
   const sql = `
@@ -31,10 +31,49 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
 });
 
 /**
- * POST route template
+ * GENERATE entities in a zone if there are none
  */
-router.post("/", (req, res) => {
-  // POST route code here
+router.post("/:id", (req, res) => {
+  const entitiesInfo = (callback) => {
+    const sql = `
+    select entity.name, entity.id, stat.min_health, stat.max_health
+  from entity, stat
+  where
+    entity.id = stat.id;`;
+
+    pool.query(sql, (error, result) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        callback(null, result);
+      }
+    });
+  };
+
+  entitiesInfo((error, result) => {
+    if (error) {
+      console.log(error);
+    } else {
+      let entities = result.rows;
+
+      // Generate a random index
+      const randomIndex = Math.floor(Math.random() * entities.length);
+
+      // Get the value at the random index
+      const chosenEntity = entities[randomIndex];
+
+      console.log(chosenEntity);
+
+      const randomNumRange = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      };
+
+      console.log(
+        "Chosen entity's health is",
+        randomNumRange(chosenEntity.min_health, chosenEntity.max_health)
+      );
+    }
+  });
 });
 
 module.exports = router;
