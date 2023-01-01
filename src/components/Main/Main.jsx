@@ -16,6 +16,15 @@ import { Button } from "@mui/material";
 const Main = () => {
   const dispatch = useDispatch();
 
+  // Psuedo-loading so that there is no flashing when components re-render/grabbed from the server
+  const [loading, setLoading] = useState(true);
+
+  const randomNumRange = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  let loadTime = randomNumRange(500, 600);
+
   // For showing certain user interaction areas
   const [showEntities, setShowEntities] = useState(true);
   const [showInteraction, setShowInteraction] = useState(false);
@@ -39,6 +48,7 @@ const Main = () => {
   useEffect(() => {
     dispatch({ type: "FETCH_ZONE", payload: user.current_zone });
     dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
+    setTimeout(() => setLoading(false), loadTime);
   }, []);
 
   // useEffect(() => {
@@ -215,6 +225,10 @@ const Main = () => {
   //   //   spawnRandomEntities(2, 5);
   //   // }
   // };
+
+  if (loading) {
+    return <div>Traveling...</div>;
+  }
 
   return (
     <div>
