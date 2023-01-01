@@ -54,26 +54,62 @@ router.post("/:id", (req, res) => {
     if (error) {
       console.log(error);
     } else {
-      let entities = result.rows;
-
-      // Generate a random index
-      const randomIndex = Math.floor(Math.random() * entities.length);
-
-      // Get the value at the random index
-      const chosenEntity = entities[randomIndex];
-
-      console.log(chosenEntity);
-
-      const randomNumRange = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      };
-
-      console.log(
-        "Chosen entity's health is",
-        randomNumRange(chosenEntity.min_health, chosenEntity.max_health)
-      );
+      addEntitiesToZone(result, (error, result2) => {
+        if (error) {
+          console.log(error);
+        } else {
+          // console.log("Is this the chosenEntity?", result2);
+        }
+      });
     }
   });
+
+  const addEntitiesToZone = (result2, callback) => {
+    console.log("adding entities to zone", result2.rows);
+
+    let entities = result2.rows;
+
+    // Generate a random index
+    const randomIndex = Math.floor(Math.random() * entities.length);
+
+    // Get the value at the random index
+    const chosenEntity = entities[randomIndex];
+
+    // console.log(chosenEntity);
+
+    const randomNumRange = (min, max) => {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    chosenEntity.current_health = randomNumRange(
+      chosenEntity.min_health,
+      chosenEntity.max_health
+    );
+
+    console.log("Chosen entity's health is", chosenEntity);
+
+    // This inserts a randomly chosen entity into the database properly
+    // after its health has also been randomly generated
+    // The next step is to also insert it into the spawn_zone table
+    // So that this can be fed back to the client
+
+    const sql = `
+      INSERT INTO spawn
+      (entity_id, current_health)
+      VALUES($1, $2);
+      `;
+    pool.query(
+      sql,
+      [chosenEntity.id, chosenEntity.current_health],
+      (error, result) => {
+        if (error) {
+          callback(error, null);
+        } else {
+          callback(null, result);
+        }
+      }
+    );
+  };
 });
 
 module.exports = router;
