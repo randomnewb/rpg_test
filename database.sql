@@ -1,30 +1,24 @@
 CREATE TABLE "zone" (
 	"id" SERIAL PRIMARY KEY,
-	"description" VARCHAR (255)
+	"name" VARCHAR (255),
+	"level" INT,
+	"requirement" VARCHAR (255)
 );
 
 CREATE TABLE "user" (
     "id" SERIAL PRIMARY KEY,
     "username" VARCHAR (80) UNIQUE NOT NULL,
     "password" VARCHAR (1000) NOT NULL,
-	"current_zone" INT REFERENCES "zone"
+	"current_zone" INT REFERENCES "zone",
+	"state" VARCHAR (255) DEFAULT 'observing'
 );
 
-CREATE TABLE "entity" (
-    "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR (1000)
-);
-
-CREATE TABLE "type" (
-	"id" SERIAL PRIMARY KEY,
-	"description" VARCHAR (255)
-);
 
 CREATE TABLE "stat" (
 	"id" SERIAL PRIMARY KEY,
 	"user_id" INT REFERENCES "user",
-	"entity_id" INT REFERENCES "entity",
-	"type_id" INT REFERENCES "type",
+	"name" VARCHAR (255),
+	"type" VARCHAR (255),
 	"rarity" INT DEFAULT 1,
 	"level" INT DEFAULT 0,
 	"experience" INT DEFAULT 0,
@@ -42,35 +36,43 @@ CREATE TABLE "stat" (
 
 CREATE TABLE "spawn" (
 	"id" SERIAL PRIMARY KEY,
-	"entity_id" INT references "entity",
+	"stat_id" INT references "stat",
+	"zone_id" INT references "zone",
 	"current_health" INT
 );
 
-CREATE TABLE "spawn_zone" (
-	"spawn_id" INT references "spawn",
-	"zone_id" INT references "zone"
+-- Determines what entities spawn in a zone, this is a many-to-many relationship
+-- A zone could potentially be able to spawn many entities
+-- That might spawn in other zones as well (like Zombie overlaps Zone 1 and 2)
+
+CREATE TABLE "zone_stat" (
+	"zone_id" INT REFERENCES "zone",
+	"stat_id" INT REFERENCES "stat",
+	"rate" NUMERIC
 );
 
-INSERT INTO "zone" ("description")
+INSERT INTO "zone" ("name")
 VALUES ('Forest'), ('Mountain');
 
-INSERT INTO "type" ("description")
-VALUES ('mob'), ('woodcutting'), ('mining');
+INSERT INTO "stat" ("name", "type", "min_health", "max_health")
+VALUES('Zombie', 'mob', 2, 5), ('Oak Tree', 'woodcutting', 2, 3), ('Boulder', 'mining', 3, 6);
 
-INSERT INTO "entity" ("name")
-VALUES ('Zombie'), ('Oak Tree'), ('Boulder');
+INSERT INTO "spawn" ("stat_id", "zone_id", "current_health")
+VALUES (1, 1, 5), (1, 1, 3), (3, 1, 4);
 
-INSERT INTO "stat" ("entity_id", "type_id", "min_health", "max_health")
-VALUES(1, 1, 2, 5), (2, 2, 2, 3), (3, 3, 3, 6);
+INSERT INTO "spawn" ("stat_id","zone_id", "current_health")
+VALUES (1, 2, 4), (3, 2, 4), (3, 2, 5);
 
-INSERT INTO "spawn" ("entity_id", "current_health")
-VALUES (1, 5), (2, 3), (3, 4);
+-- For example, zombies and trees spawn in zone 1 (Forest!)
+-- Zombies and boulder spawn in zone 2 (Mountain!)
+INSERT INTO "zone_stat" ("zone_id", "stat_id", "rate")
+VALUES (1, 1, 0.75), (1, 2, 0.60), (2, 1, 0.75), (2, 3, 0.60);
 
-INSERT INTO "spawn" ("entity_id", "current_health")
-VALUES (1, 4), (2, 4), (3, 5);
+-- Shows all spawned entities in a visited zone
 
-INSERT INTO "spawn_zone" ("spawn_id", "zone_id")
-VALUES (1, 1), (2, 1), (3, 1);
-
-INSERT INTO "spawn_zone" ("spawn_id", "zone_id")
-VALUES (4, 2), (5, 2), (6, 2);
+SELECT spawn.id as spawn_id, spawn.current_health, stat.name, stat.type, zone.id as zone_id
+FROM spawn, stat, zone
+where
+	zone_id = 1
+	and spawn.stat_id = stat.id
+	AND spawn.zone_id = zone.id;

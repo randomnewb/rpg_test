@@ -16,34 +16,6 @@ import { Button } from "@mui/material";
 const Main = () => {
   const dispatch = useDispatch();
 
-  // Enemy list, used when instantiating a new entity
-  const entityList = [
-    {
-      id: 0,
-      value: 0,
-      name: "zombie",
-      type: "mob",
-      minHealth: 2,
-      maxHealth: 5,
-    },
-    {
-      id: 1,
-      value: 1,
-      name: "oak tree",
-      type: "tree",
-      minHealth: 2,
-      maxHealth: 3,
-    },
-    {
-      id: 2,
-      value: 2,
-      name: "boulder",
-      type: "rock",
-      minHealth: 3,
-      maxHealth: 6,
-    },
-  ];
-
   // For showing certain user interaction areas
   const [showEntities, setShowEntities] = useState(true);
   const [showInteraction, setShowInteraction] = useState(false);
@@ -55,21 +27,12 @@ const Main = () => {
   const zone = useSelector((store) => store.zone);
   const entity = useSelector((store) => store.entity);
   const spawn = useSelector((store) => store.spawn);
-  const playerState = useSelector((store) => store.playerState);
   const user = useSelector((store) => store.user);
-
-  // Holds current information
-  // const [currentEntity, setCurrentEntity] = useState(entity);
-  // const [currentZone, setCurrentZone] = useState(zone);
-  // const [currentPlayerState, setCurrentPlayerState] = useState(playerState);
 
   // For holding the entities we have instantiated
   // const [entityProperties, setEntityProperties] = useState("");
   // const [entityHealth, setEntityHealth] = useState(null);
   // const [entityCreated, setEntityCreated] = useState(false);
-
-  // Current unused list of entities that can spawn by zone
-  // const zoneEntities = [entityList[0], entityList[1], entityList[2]];
 
   // Updates the user's current zone on page refresh
 
@@ -78,11 +41,11 @@ const Main = () => {
     dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
   }, []);
 
-  useEffect(() => {
-    // if (spawn.length <= 0) {
-    dispatch({ type: "POST_SPAWN", payload: user.current_zone });
-    // }
-  }, []);
+  // useEffect(() => {
+  //   // if (spawn.length <= 0) {
+  //   dispatch({ type: "POST_SPAWN", payload: user.current_zone });
+  //   // }
+  // }, []);
 
   // useEffect will need to run again when dispatch is run
 
@@ -259,9 +222,7 @@ const Main = () => {
         <span>The current zone is: {JSON.stringify(user.current_zone)}</span>
         <br />
         <br />
-        <span>
-          Current Player State is: {/* {JSON.stringify(currentPlayerState)} */}
-        </span>
+        <span>Current Player State is: {JSON.stringify(user.state)}</span>
         {/* <span>{JSON.stringify(spawnEntities)}</span> */}
       </div>
       {showEntities && (
@@ -271,8 +232,8 @@ const Main = () => {
           {spawn.map((entity) => (
             <Button
               // onClick={interactEntity}
-              key={entity.id}
-              id={entity.id}
+              key={entity.spawn_id}
+              id={entity.spawn_id}
               value={entity.current_health}
               // variant="blue"
             >
