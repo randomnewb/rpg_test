@@ -78,3 +78,33 @@ Directory Structure:
     [ ] Setup HP/MP/Stamina System
     [ ] Disable logger when deploying the production build (unless this is automatic)
     [ ] Update to configureStore method of the @reduxjs/toolkit package, which replaces createStore (https://redux.js.org/introduction/why-rtk-is-redux-today)
+
+Interaction feature
+
+Players can interact with one entity at a time (one-to-many table)
+So the user table should have a reference to the spawn table and a spawn.id
+In this way, multiple players can be interacting with one entity at a time
+And this is an easy to way to implement playing 'together'
+
+Client-side:
+
+- Clicking an entity runs the interactWithEntity() function
+- Pass in the spawn.id of the entity
+- User Saga sends an UPDATE_ENGAGE_ENTITY to the server
+  (this is the initial engagement step, so the server/player both know an entity is being interacted with)
+
+Server-side:
+
+- app.put
+- UPDATE the user's spawn_id from the user table
+- but also check if the user is in that zone that matches where the spawn is
+  (will there be an issue if the spawn no longer exists either?
+  or will this be resolved later naturally because a player
+  who goes to act upon an entity that no longer exists
+  will receive such a message when that code is implemented?)
+- send back updated information to the client probably
+
+Client-side:
+
+- Fetch the user information and set it to the reducer
+- If a player has a spawn_id (something they're interacting with), their view and state will change
