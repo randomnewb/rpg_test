@@ -48,7 +48,7 @@ CREATE TABLE "spawn" (
 CREATE TABLE "zone_stat" (
 	"zone_id" INT REFERENCES "zone",
 	"stat_id" INT REFERENCES "stat",
-	"rate" NUMERIC
+	"rate" INT
 );
 
 INSERT INTO "zone" ("name")
@@ -66,13 +66,27 @@ VALUES (1, 2, 4), (3, 2, 4), (3, 2, 5);
 -- For example, zombies and trees spawn in zone 1 (Forest!)
 -- Zombies and boulder spawn in zone 2 (Mountain!)
 INSERT INTO "zone_stat" ("zone_id", "stat_id", "rate")
-VALUES (1, 1, 0.75), (1, 2, 0.60), (2, 1, 0.75), (2, 3, 0.60);
+VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
 
 -- Shows all spawned entities in a visited zone
 
-SELECT spawn.id as spawn_id, spawn.current_health, stat.name, stat.type, zone.id as zone_id
-FROM spawn, stat, zone
-where
-	zone_id = 1
-	and spawn.stat_id = stat.id
-	AND spawn.zone_id = zone.id;
+-- SELECT spawn.id as spawn_id, spawn.current_health, stat.name, stat.type, zone.id as zone_id
+-- FROM spawn, stat, zone
+-- where
+-- 	zone_id = 1
+-- 	and spawn.stat_id = stat.id
+-- 	AND spawn.zone_id = zone.id;
+
+
+-- SELECT zone_id, stat_id, rate
+-- FROM zone_stat
+-- where zone_id = 2;
+
+
+-- select "name", "type", min_health, max_health
+-- FROM stat
+-- where id = 1;
+
+-- INSERT INTO spawn
+-- (stat_id, zone_id, current_health)
+-- VALUES(1, 1, 3);

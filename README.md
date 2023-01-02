@@ -76,6 +76,5 @@ Directory Structure:
 
     [ ] Setup a log/narrator
     [ ] Setup HP/MP/Stamina System
-    [ ] Add a pseudo-loading modal/indicator
     [ ] Disable logger when deploying the production build (unless this is automatic)
     [ ] Update to configureStore method of the @reduxjs/toolkit package, which replaces createStore (https://redux.js.org/introduction/why-rtk-is-redux-today)

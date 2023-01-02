@@ -48,6 +48,10 @@ const Main = () => {
   useEffect(() => {
     dispatch({ type: "FETCH_ZONE", payload: user.current_zone });
     dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
+    dispatch({ type: "POST_SPAWN", payload: user.current_zone });
+  }, []);
+
+  useEffect(() => {
     setTimeout(() => setLoading(false), loadTime);
   }, []);
 

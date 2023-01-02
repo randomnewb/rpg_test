@@ -33,89 +33,132 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
  */
 
 // This is triggered when a player enters a zone that has no entities
-// We trigger entity creation based on the empty zone (its id)
-// select the entities that can exist in a zone
 
-router.post("/:id", (req, res) => {});
+// 1st step, first query, using the zone_id the player entered
+// We grab all entities that could spawn in that zone
 
-// router.post("/:id", (req, res) => {
-//   const entitiesInfo = (callback) => {
-//     const sql = `
-//     select entity.name, entity.id, stat.min_health, stat.max_health
-//     from entity, stat
-//     where
-//     entity.id = stat.id;`;
+router.post("/:id", (req, res) => {
+  const entitiesInZone = (callback) => {
+    const sql = `
+      SELECT zone_id, stat_id, rate
+      FROM zone_stat
+      WHERE zone_id = $1;`;
+    pool.query(sql, [req.params.id], (error, result) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        callback(null, result);
+      }
+    });
+  };
 
-//     pool.query(sql, (error, result) => {
-//       if (error) {
-//         callback(error, null);
-//       } else {
-//         callback(null, result);
-//       }
-//     });
-//   };
+  entitiesInZone((error, result) => {
+    if (error) {
+      console.log(error);
+    } else {
+      createChosenEntity(result, (error, result2) => {
+        if (error) {
+          console.log(error);
+        } else {
+          let chosenEntity = result2.rows[0];
 
-//   entitiesInfo((error, result) => {
-//     if (error) {
-//       console.log(error);
-//     } else {
-//       addEntitiesToZone(result, (error, result2) => {
-//         if (error) {
-//           console.log(error);
-//         } else {
-//           // console.log("Is this the chosenEntity?", result2);
-//         }
-//       });
-//     }
-//   });
+          const randomNumRange = (min, max) => {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+          };
 
-//   const addEntitiesToZone = (result2, callback) => {
-//     console.log("adding entities to zone", result2.rows);
+          chosenEntity.current_health = randomNumRange(
+            chosenEntity.min_health,
+            chosenEntity.max_health
+          );
 
-//     let entities = result2.rows;
+          console.log("Chosen entity is", chosenEntity);
 
-//     // Generate a random index
-//     const randomIndex = Math.floor(Math.random() * entities.length);
+          const sql = `
+            INSERT INTO spawn
+            (stat_id, zone_id, current_health)
+            VALUES($1, $2, $3);
+          `;
 
-//     // Get the value at the random index
-//     const chosenEntity = entities[randomIndex];
+          pool.query(
+            sql,
+            [
+              chosenEntity.id,
+              chosenEntity.zone_id,
+              chosenEntity.current_health,
+            ],
+            (error, result) => {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("Success");
+              }
+            }
+          );
+        }
+      });
+    }
+  });
 
-//     const randomNumRange = (min, max) => {
-//       return Math.floor(Math.random() * (max - min + 1)) + min;
-//     };
+  // 2nd step, take the entities and choose one randomly based on weighting
 
-//     chosenEntity.current_health = randomNumRange(
-//       chosenEntity.min_health,
-//       chosenEntity.max_health
-//     );
+  const createChosenEntity = (result, callback) => {
+    console.log("Entities in zone", result.rows);
+    /*
+    Article about weighted random
+    Feed an array with a weight (renamed to "rate" to match database table)
+    And return the id or the name of the item that you want (in this case, stat_id)
 
-//     console.log("Chosen entity's health is", chosenEntity);
-//     console.log("id is", chosenEntity.id);
+    https://stackoverflow.com/a/55671924/20398230
+    */
 
-//     // This inserts a randomly chosen entity into the database properly
-//     // after its health has also been randomly generated
-//     // The next step is to also insert it into the spawn_zone table
-//     // So that this can be fed back to the client
-//     // We need the created entity's id and req.params.id from the user visiting the zone
-//     // Both of these can be used to create the entity in the junction table
+    let entities = result.rows;
 
-//     const sql = `
-//       INSERT INTO spawn
-//       (entity_id, current_health)
-//       VALUES($1, $2);
-//       `;
-//     pool.query(
-//       sql,
-//       [chosenEntity.id, chosenEntity.current_health],
-//       (error, result) => {
-//         if (error) {
-//           callback(error, null);
-//         } else {
-//           callback(null, result);
-//         }
-//       }
-//     );
-//   };
-// });
+    function weighted_random(options) {
+      var i;
+
+      var rates = [];
+
+      for (i = 0; i < options.length; i++)
+        rates[i] = options[i].rate + (rates[i - 1] || 0);
+
+      var random = Math.random() * rates[rates.length - 1];
+
+      for (i = 0; i < rates.length; i++) if (rates[i] > random) break;
+
+      return options[i].stat_id;
+    }
+
+    // Instantiate the chosen entity as an empty object
+    // Choose an entity with random weighting (set to stat_id)
+    // Pass the zone_id as well
+
+    let chosenEntity = {};
+
+    chosenEntity.stat_id = weighted_random(entities);
+    chosenEntity.zone_id = entities[0].zone_id;
+
+    // Send the zone as well
+
+    const sql2 = `
+    SELECT stat.id, stat.min_health, stat.max_health, zone_stat.zone_id
+    FROM stat, zone_stat
+    WHERE
+        zone_stat.zone_id = $2
+        AND zone_stat.stat_id = stat.id
+        AND stat.id = $1;
+    `;
+    pool.query(
+      sql2,
+      [chosenEntity.stat_id, chosenEntity.zone_id],
+      (error, result) => {
+        if (error) {
+          callback(error, null);
+        } else {
+          callback(null, result);
+        }
+      }
+    );
+  };
+});
 
 module.exports = router;
