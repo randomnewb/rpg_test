@@ -32,6 +32,8 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
  * GENERATE entities in a zone if there are none
  */
 
+// This needs to be converted to async/await...
+
 // This is triggered when a player enters a zone that has no entities
 
 // 1st step, first query, using the zone_id the player entered
@@ -71,8 +73,6 @@ router.post("/:id", (req, res) => {
             chosenEntity.max_health
           );
 
-          console.log("Chosen entity is", chosenEntity);
-
           const sql = `
             INSERT INTO spawn
             (stat_id, zone_id, current_health)
@@ -90,7 +90,6 @@ router.post("/:id", (req, res) => {
               if (error) {
                 console.log(error);
               } else {
-                console.log("Success");
               }
             }
           );
@@ -102,7 +101,6 @@ router.post("/:id", (req, res) => {
   // 2nd step, take the entities and choose one randomly based on weighting
 
   const createChosenEntity = (result, callback) => {
-    console.log("Entities in zone", result.rows);
     /*
     Article about weighted random
     Feed an array with a weight (renamed to "rate" to match database table)
