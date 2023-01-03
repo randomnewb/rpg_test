@@ -101,7 +101,7 @@ const chooseRandomEntity = async (entitiesInZone) => {
       randomChosenEntity.zone_id,
     ]);
 
-    return chosenEntity;
+    return chosenEntity.rows[0];
   } catch (error) {
     res.sendStatus(500);
   }
@@ -112,12 +112,7 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
 
   try {
     const entitiesInZone = await getEntitiesInZone(req.params.id);
-    const randomChosenEntity = await chooseRandomEntity(entitiesInZone);
-
-    // console.log("zone entities", entitiesInZone);
-    // console.log("randomly chosen entity", randomChosenEntity.rows[0]);
-
-    let randomEntity = randomChosenEntity.rows[0];
+    const randomEntity = await chooseRandomEntity(entitiesInZone);
 
     const randomNumRange = (min, max) => {
       return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -140,8 +135,6 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
       randomEntity.current_health,
     ]);
 
-    console.log(randomEntity);
-
     await db.query("COMMIT");
   } catch (error) {
     await db.query("ROLLBACK");
@@ -150,5 +143,7 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
     db.release();
   }
 });
+
+// Test another post method by zone id to see if that is the issue
 
 module.exports = router;
