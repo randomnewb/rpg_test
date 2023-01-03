@@ -74,9 +74,19 @@ Directory Structure:
 
 ## To-Do's
 
+    [ ] BUG: Clicking between different zones, the zone no longer updates for the user (on server or database)
     [ ] Setup a log/narrator
     [ ] Setup HP/MP/Stamina System
+    [ ] A server-side check needs to be added for entity spawning (only spawn if there are less than 0 entities)
+          Also, spawn 2-5 entities if there are less than 0 entities
     [ ] Disable logger when deploying the production build (unless this is automatic)
+    [ ] Zones that players have access to needs to be programatically provided and mapped in World component
+          That is, only zones that have been unlocked will have players be shown access to
+          And in future, zones that could be accessed will be 'disabled', but will have helper text (sometimes)
+          to show how they can be unlocked
+    [ ] Inform on Button hover (for world/zone selection)
+        https://stackoverflow.com/questions/61204955/material-ui-display-sub-element-on-hover-of-parent
+        https://codesandbox.io/s/mui-theme-css-hover-example-n8ou5?file=/demo.js
     [ ] Update to configureStore method of the @reduxjs/toolkit package, which replaces createStore (https://redux.js.org/introduction/why-rtk-is-redux-today)
 
 Interaction feature

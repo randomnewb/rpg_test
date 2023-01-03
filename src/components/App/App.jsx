@@ -23,94 +23,9 @@ import Main from "../Main/Main";
 import "./App.css";
 
 import { createTheme, ThemeProvider } from "@mui/material";
+import defaultTheme from "./defaultTheme";
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#ead4aa",
-    },
-    secondary: {
-      main: "#ead4aa",
-    },
-    normal: {
-      main: "#ead4aa",
-    },
-    woodcutting: {
-      main: "#b86f50",
-    },
-    mining: {
-      main: "#c0cbdc",
-    },
-    attacking: {
-      main: "#e43b44",
-    },
-  },
-  components: {
-    MuiButton: {
-      defaultProps: {
-        variant: "contained",
-        style: {
-          "&:hover": {
-            color: "#181425",
-            backgroundColor: "#e4a672",
-          },
-        },
-      },
-      variants: [
-        {
-          props: { variant: "blue" },
-          style: {
-            textTransform: "none",
-            border: `2px dashed blue`,
-            "&:hover": {
-              color: "#181425",
-              backgroundColor: "#00ff00",
-            },
-          },
-        },
-        {
-          props: { variant: "red" },
-          style: {
-            border: `4px dashed red`,
-            "&:hover": {
-              color: "#181425",
-              backgroundColor: "#00bb00",
-            },
-          },
-        },
-      ],
-    },
-  },
-});
-
-// components: {
-//     MuiButton: {
-//         defaultProps: {
-//             variant: "test",
-//             sx: {
-//                 "&:hover": {
-//                     color: "#181425",
-//                     backgroundColor: "#00ff00",
-//                 },
-//             },
-//         },
-//     },
-// },
-
-// [
-//   {
-//     '&:hover': {
-//       color: 'red',
-//       backgroundColor: 'white',
-//     },
-//   },
-//   foo && {
-//     '&:hover': { backgroundColor: 'grey' },
-//   },
-//   bar && {
-//     '&:hover': { backgroundColor: 'yellow' },
-//   },
-// ]
+let theme = createTheme(defaultTheme);
 
 function App() {
   const dispatch = useDispatch();

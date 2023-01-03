@@ -11,10 +11,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Button } from "@mui/material";
 
 const Main = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   // Psuedo-loading so that there is no flashing when components re-render/grabbed from the server
   const [loading, setLoading] = useState(true);
@@ -23,7 +25,7 @@ const Main = () => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  let loadTime = randomNumRange(500, 600);
+  let loadTime = randomNumRange(1, 2);
 
   // For showing certain user interaction areas
   const [showEntities, setShowEntities] = useState(true);
@@ -246,7 +248,7 @@ const Main = () => {
       {showEntities && (
         <div id="showEntities">
           {JSON.stringify(spawn)}
-
+          {/* 
           {spawn.map((entity) => (
             <Button
               // onClick={interactEntity}
@@ -257,7 +259,7 @@ const Main = () => {
             >
               {entity.name}
             </Button>
-          ))}
+          ))} */}
         </div>
       )}
       {showInteraction && (

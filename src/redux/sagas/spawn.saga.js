@@ -15,8 +15,7 @@ function* spawnSaga() {
 function* postSpawn(action) {
   try {
     const spawn = yield axios.post(`/api/spawn/${action.payload}`);
-    console.log("postSpawn data", spawn.data);
-    // yield put({ type: "SET_SPAWN", payload: spawn.data });
+    yield put({ type: "SET_SPAWN", payload: spawn.data });
   } catch (e) {
     console.log(e);
     alert("Problem spawning entities");

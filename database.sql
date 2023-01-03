@@ -51,11 +51,21 @@ CREATE TABLE "zone_stat" (
 	"rate" INT
 );
 
+
 INSERT INTO "zone" ("name")
 VALUES ('Forest'), ('Mountain');
 
 INSERT INTO "stat" ("name", "type", "min_health", "max_health")
 VALUES('Zombie', 'mob', 2, 5), ('Oak Tree', 'woodcutting', 2, 3), ('Boulder', 'mining', 3, 6);
+
+
+-- Altering the user table to add a reference to spawn_id because
+-- PostgresQL is struggling to create it when there's no reference
+
+ALTER TABLE "user"
+ADD "spawn_id" INT REFERENCES "spawn";
+
+-- Sample Data
 
 INSERT INTO "spawn" ("stat_id", "zone_id", "current_health")
 VALUES (1, 1, 5), (1, 1, 3), (3, 1, 4);
