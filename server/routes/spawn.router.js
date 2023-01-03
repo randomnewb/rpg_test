@@ -111,6 +111,7 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
   db = await pool.connect();
 
   try {
+    await db.query("BEGIN");
     const entitiesInZone = await getEntitiesInZone(req.params.id);
     const randomEntity = await chooseRandomEntity(entitiesInZone);
 
@@ -122,6 +123,8 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
       randomEntity.min_health,
       randomEntity.max_health
     );
+
+    await db.query("BEGIN");
 
     const sql_instantiateEntity = `
                 INSERT INTO spawn
@@ -136,6 +139,7 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
     ]);
 
     await db.query("COMMIT");
+    res.sendStatus(201);
   } catch (error) {
     await db.query("ROLLBACK");
     res.sendStatus(500);
@@ -143,7 +147,5 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
     db.release();
   }
 });
-
-// Test another post method by zone id to see if that is the issue
 
 module.exports = router;
