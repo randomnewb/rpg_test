@@ -25,7 +25,7 @@ const Main = () => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  let loadTime = randomNumRange(600, 750);
+  let loadTime = randomNumRange(750, 850);
 
   // For showing certain user interaction areas
   const [showEntities, setShowEntities] = useState(true);
