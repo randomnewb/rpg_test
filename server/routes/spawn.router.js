@@ -71,7 +71,7 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
 
     await db.query("COMMIT");
     // }
-    res.set("Cache-Control", "no-cache");
+    res.sendStatus(201);
   } catch (error) {
     await db.query("ROLLBACK");
     console.log("Error creating a new entity", error);
@@ -189,32 +189,5 @@ const randomizeHealth = async (randomEntity) => {
     console.log(error);
   }
 };
-
-// // This works fine
-
-// router.put("/:id", rejectUnauthenticated, async (req, res) => {
-//   db = await pool.connect();
-
-//   try {
-//     await db.query("BEGIN");
-
-//     const sql_instantiateEntity = `
-//     INSERT INTO spawn
-//     (stat_id, zone_id, current_health)
-//     VALUES($1, $2, $3);
-//   `;
-
-//     await db.query(sql_instantiateEntity, [1, req.params.id, 5]);
-
-//     await db.query("COMMIT");
-
-//     res.sendStatus(200);
-//   } catch (error) {
-//     await db.query("ROLLBACK");
-//     console.log("Error", error);
-//   } finally {
-//     db.release();
-//   }
-// });
 
 module.exports = router;
