@@ -8,8 +8,13 @@ const {
 /**
  * FETCH current entities in a zone
  */
-router.get("/:id", rejectUnauthenticated, (req, res) => {
-  const sql = `
+router.get("/:id", rejectUnauthenticated, async (req, res) => {
+  const db = await pool.connect();
+
+  try {
+    await db.query("BEGIN");
+
+    const sql = `
     SELECT spawn.id as spawn_id, spawn.current_health, stat.name, stat.type, zone.id as zone_id
     FROM spawn, stat, zone
     WHERE
@@ -17,15 +22,16 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
       and spawn.stat_id = stat.id
       AND spawn.zone_id = zone.id;
   `;
-  pool
-    .query(sql, [req.params.id])
-    .then((result) => {
-      res.send(result.rows);
-    })
-    .catch((e) => {
-      console.log(e);
-      res.sendStatus(500);
-    });
+
+    result = await db.query(sql, [req.params.id]);
+
+    res.send(result.rows);
+  } catch (err) {
+    console.error(err);
+    sendStatus(500);
+  } finally {
+    db.release();
+  }
 });
 
 /**
@@ -36,23 +42,62 @@ router.get("/:id", rejectUnauthenticated, (req, res) => {
  * The POST takes all that information and INSERTS the newly made entity into the database
  */
 
-const checkForEntities = async (zone_id) => {
+router.post("/:id", rejectUnauthenticated, async (req, res) => {
+  db = await pool.connect();
+
+  try {
+    const entitiesAmount = await checkForEntities(req.params.id, db);
+    const entitiesInZone = await getEntitiesInZone(req.params.id, db);
+    const randomEntity = await chooseRandomEntity(entitiesInZone, db);
+    const randomHealth = await randomizeHealth(randomEntity);
+
+    console.log(entitiesAmount.length);
+
+    // if (entitiesAmount.length <= 0) {
+
+    await db.query("BEGIN");
+
+    const sql_instantiateEntity = `
+                  INSERT INTO spawn
+                  (stat_id, zone_id, current_health)
+                  VALUES($1, $2, $3);
+                `;
+
+    await db.query(sql_instantiateEntity, [
+      randomEntity.id,
+      randomEntity.zone_id,
+      randomHealth.current_health,
+    ]);
+
+    await db.query("COMMIT");
+    // }
+  } catch (error) {
+    await db.query("ROLLBACK");
+    console.log("Error creating a new entity", error);
+    res.sendStatus(500);
+  } finally {
+    db.release();
+  }
+});
+
+const checkForEntities = async (zone_id, db) => {
   try {
     const sql_checkForEntities = `
     SELECT * FROM spawn
     WHERE zone_id = $1;
     `;
 
-    const checkForEntities = await pool.query(sql_checkForEntities, [zone_id]);
+    const checkForEntities = await db.query(sql_checkForEntities, [zone_id]);
 
-    return checkForEntities;
+    return checkForEntities.rows;
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
   }
 };
 
-const getEntitiesInZone = async (zone_id) => {
+const getEntitiesInZone = async (zone_id, db) => {
+  // db = await pool.connect();
   // 1st step, first query, using the zone_id the player entered
   // We grab all entities that could spawn in that zone
   try {
@@ -61,10 +106,9 @@ const getEntitiesInZone = async (zone_id) => {
     FROM zone_stat
     WHERE zone_id = $1;`;
 
-    const spawnableEntities = await pool.query(sql_spawnableEntities, [
-      zone_id,
-    ]);
+    const spawnableEntities = await db.query(sql_spawnableEntities, [zone_id]);
 
+    // db.release();
     return spawnableEntities.rows;
   } catch (error) {
     console.log(error);
@@ -72,7 +116,8 @@ const getEntitiesInZone = async (zone_id) => {
   }
 };
 
-const chooseRandomEntity = async (entitiesInZone) => {
+const chooseRandomEntity = async (entitiesInZone, db) => {
+  // db = await pool.connect();
   try {
     //   /*
     //   Article about weighted random
@@ -115,25 +160,20 @@ const chooseRandomEntity = async (entitiesInZone) => {
           AND stat.id = $1;
       `;
 
-    const chosenEntity = await pool.query(sql_chooseRandomEntity, [
+    const chosenEntity = await db.query(sql_chooseRandomEntity, [
       randomChosenEntity.stat_id,
       randomChosenEntity.zone_id,
     ]);
 
+    // db.release();
     return chosenEntity.rows[0];
   } catch (error) {
     res.sendStatus(500);
   }
 };
 
-router.post("/:id", rejectUnauthenticated, async (req, res) => {
-  db = await pool.connect();
-
+const randomizeHealth = async (randomEntity) => {
   try {
-    await db.query("BEGIN");
-    const entitiesInZone = await getEntitiesInZone(req.params.id);
-    const randomEntity = await chooseRandomEntity(entitiesInZone);
-
     const randomNumRange = (min, max) => {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     };
@@ -143,28 +183,37 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
       randomEntity.max_health
     );
 
-    const sql_instantiateEntity = `
-                INSERT INTO spawn
-                (stat_id, zone_id, current_health)
-                VALUES($1, $2, $3);
-              `;
-
-    await db.query(sql_instantiateEntity, [
-      randomEntity.id,
-      randomEntity.zone_id,
-      randomEntity.current_health,
-    ]);
-
-    await db.query("COMMIT");
-    res.sendStatus(201);
+    return randomEntity;
   } catch (error) {
-    await db.query("ROLLBACK");
-    console.log("Error creating a new entity", error);
-    res.sendStatus(500);
-  } finally {
-    db.release();
+    console.log(error);
   }
-  // }
-});
+};
+
+// // This works fine
+
+// router.post("/:id", rejectUnauthenticated, async (req, res) => {
+//   db = await pool.connect();
+
+//   try {
+//     await db.query("BEGIN");
+
+//     const sql_instantiateEntity = `
+//     INSERT INTO spawn
+//     (stat_id, zone_id, current_health)
+//     VALUES($1, $2, $3);
+//   `;
+
+//     await db.query(sql_instantiateEntity, [1, req.params.id, 5]);
+
+//     await db.query("COMMIT");
+
+//     res.sendStatus(200);
+//   } catch (error) {
+//     await db.query("ROLLBACK");
+//     console.log("Error", error);
+//   } finally {
+//     db.release();
+//   }
+// });
 
 module.exports = router;
