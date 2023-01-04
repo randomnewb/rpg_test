@@ -51,27 +51,29 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
     const randomEntity = await chooseRandomEntity(entitiesInZone, db);
     const randomHealth = await randomizeHealth(randomEntity);
 
-    console.log(entitiesAmount.length);
+    // console.log("req.params.id", req.params.id);
+    // console.log(entitiesAmount.length);
 
-    // if (entitiesAmount.length <= 0) {
+    if (entitiesAmount.length <= 2) {
+      await db.query("BEGIN");
 
-    await db.query("BEGIN");
-
-    const sql_instantiateEntity = `
+      const sql_instantiateEntity = `
                   INSERT INTO spawn
                   (stat_id, zone_id, current_health)
                   VALUES($1, $2, $3);
                 `;
 
-    await db.query(sql_instantiateEntity, [
-      randomEntity.id,
-      randomEntity.zone_id,
-      randomHealth.current_health,
-    ]);
+      await db.query(sql_instantiateEntity, [
+        randomEntity.id,
+        randomEntity.zone_id,
+        randomHealth.current_health,
+      ]);
 
-    await db.query("COMMIT");
-    // }
-    res.sendStatus(201);
+      await db.query("COMMIT");
+      res.sendStatus(201);
+    } else {
+      res.sendStatus(200);
+    }
   } catch (error) {
     await db.query("ROLLBACK");
     console.log("Error creating a new entity", error);

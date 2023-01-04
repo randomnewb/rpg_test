@@ -19,13 +19,13 @@ const Main = () => {
   const history = useHistory();
 
   // Psuedo-loading so that there is no flashing when components re-render/grabbed from the server
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const randomNumRange = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  let loadTime = randomNumRange(750, 850);
+  let loadTime = randomNumRange(600, 700);
 
   // For showing certain user interaction areas
   const [showEntities, setShowEntities] = useState(true);
@@ -46,10 +46,10 @@ const Main = () => {
 
   // Updates the user's current zone on page refresh
 
-  // useEffect(() => {
-  //   dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
-  //   dispatch({ type: "POST_SPAWN", payload: user.current_zone });
-  // }, []);
+  useEffect(() => {
+    // dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
+    dispatch({ type: "POST_SPAWN", payload: user.current_zone });
+  }, []);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), loadTime);

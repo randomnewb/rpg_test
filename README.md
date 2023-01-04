@@ -88,15 +88,13 @@ Directory Structure:
         https://codesandbox.io/s/mui-theme-css-hover-example-n8ou5?file=/demo.js
     [ ] Update to configureStore method of the @reduxjs/toolkit package, which replaces createStore (https://redux.js.org/introduction/why-rtk-is-redux-today)
 
-Bug: Zone selection bug
+## Bugs
 
-- When there is a conditional on the server (such as a check for entities over a certain amount),
-  the current_zone stops updating
-- Potential solution: only send the request to the server when reducer is less than a certain amount
-- i.e., spawn.length less than 3 for the current_zone
-- However, this could still be an issue with Postman or sending requests otherwise
-- so this check still needs to be done on the server
-  Interaction feature
+    [ ] Clicking any of the zones tied to the POST_SPAWN causes it to run twice
+          (seems that the last saved user zone and the zone where the user is traveling to is passed)
+          This does not happen when in the zone and refreshing
+
+Interaction feature
 
 Players can interact with one entity at a time (one-to-many table)
 So the user table should have a reference to the spawn table and a spawn.id

@@ -13,8 +13,7 @@ const World = () => {
 
   const setZone = (zone) => {
     dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: zone });
-    dispatch({ type: "POST_SPAWN", payload: zone });
-    dispatch({ type: "FETCH_SPAWN", payload: zone });
+    // dispatch({ type: "POST_SPAWN", payload: zone });
   };
 
   const changeZone = (e) => {

@@ -15,7 +15,6 @@ function* spawnSaga() {
 function* postSpawn(action) {
   try {
     yield axios.post(`/api/spawn/${action.payload}`);
-    console.log("post spawn action", action.payload);
     yield put({ type: "FETCH_SPAWN", payload: action.payload });
   } catch (e) {
     console.log(e);
