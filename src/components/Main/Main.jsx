@@ -19,7 +19,7 @@ const Main = () => {
   const history = useHistory();
 
   // Psuedo-loading so that there is no flashing when components re-render/grabbed from the server
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const randomNumRange = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -35,7 +35,8 @@ const Main = () => {
   // const [spawnEntities, setSpawnEntities] = useState(spawn);
 
   // Store
-  // const entity = useSelector((store) => store.entity);
+  const zone = useSelector((store) => store.zone);
+  const entity = useSelector((store) => store.entity);
   const spawn = useSelector((store) => store.spawn);
   const user = useSelector((store) => store.user);
 
@@ -46,10 +47,11 @@ const Main = () => {
 
   // Updates the user's current zone on page refresh
 
-  // useEffect(() => {
-  //   dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
-  //   dispatch({ type: "POST_SPAWN", payload: user.current_zone });
-  // }, []);
+  useEffect(() => {
+    dispatch({ type: "FETCH_ZONE", payload: user.current_zone });
+    dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
+    dispatch({ type: "POST_SPAWN", payload: user.current_zone });
+  }, []);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), loadTime);

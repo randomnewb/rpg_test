@@ -7,13 +7,17 @@ const World = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  // const zone = useSelector((store) => store.zone);
+  const zone = useSelector((store) => store.zone);
   const user = useSelector((store) => store.user);
-  // const [currentZone, setCurrentZone] = useState(zone);
+  const [currentZone, setCurrentZone] = useState(zone);
+
+  useEffect(() => {
+    setCurrentZone(user.current_zone);
+  }, [zone]);
 
   const setZone = (zone) => {
     dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: zone });
-    dispatch({ type: "POST_SPAWN", payload: zone });
+    // dispatch({ type: "POST_SPAWN", payload: zone });
     dispatch({ type: "FETCH_SPAWN", payload: zone });
   };
 
@@ -25,7 +29,7 @@ const World = () => {
   return (
     <div>
       <div>
-        <span>Zone is: {JSON.stringify(user.current_zone)}</span>
+        <span>Zone is: {JSON.stringify(currentZone)}</span>
       </div>
 
       <div>
