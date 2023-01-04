@@ -78,7 +78,6 @@ Directory Structure:
     [ ] Setup HP/MP/Stamina System
     [ ] A server-side check needs to be added for entity spawning (only spawn if there are less than 0 entities)
           Also, spawn 2-5 entities if there are less than 0 entities
-    [ ] Disable logger when deploying the production build (unless this is automatic)
     [ ] Zones that players have access to needs to be programatically provided and mapped in World component
           That is, only zones that have been unlocked will have players be shown access to
           And in future, zones that could be accessed will be 'disabled', but will have helper text (sometimes)

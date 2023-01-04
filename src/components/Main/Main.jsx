@@ -55,12 +55,6 @@ const Main = () => {
     setTimeout(() => setLoading(false), loadTime);
   }, []);
 
-  // useEffect(() => {
-  //   // if (spawn.length <= 0) {
-  //   dispatch({ type: "POST_SPAWN", payload: user.current_zone });
-  //   // }
-  // }, []);
-
   // useEffect will need to run again when dispatch is run
 
   // useEffect(() => {

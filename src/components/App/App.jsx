@@ -13,7 +13,6 @@ import Footer from "../Footer/Footer";
 
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 
-import LandingPage from "../LandingPage/LandingPage";
 import LoginPage from "../LoginPage/LoginPage";
 import RegisterPage from "../RegisterPage/RegisterPage";
 import World from "../World/World";
@@ -51,6 +50,7 @@ function App() {
             Visiting localhost:3000/user will show the UserPage if the user is logged in.
             If the user is not logged in, the ProtectedRoute will show the LoginPage (component).
             Even though it seems like they are different pages, the user is always on localhost:3000/user */}
+
             <ProtectedRoute exact path="/world">
               <World />
             </ProtectedRoute>
@@ -82,17 +82,6 @@ function App() {
               ) : (
                 // Otherwise, show the registration page
                 <RegisterPage />
-              )}
-            </Route>
-
-            <Route exact path="/world">
-              {user.id ? (
-                // If the user is already logged in,
-                // redirect them to the /user page
-                <Redirect to="/world" />
-              ) : (
-                // Otherwise, show the Landing page
-                <LandingPage />
               )}
             </Route>
 

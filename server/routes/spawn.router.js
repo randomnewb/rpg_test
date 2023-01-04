@@ -51,9 +51,6 @@ router.post("/:id", rejectUnauthenticated, async (req, res) => {
     const randomEntity = await chooseRandomEntity(entitiesInZone, db);
     const randomHealth = await randomizeHealth(randomEntity);
 
-    // console.log("req.params.id", req.params.id);
-    // console.log(entitiesAmount.length);
-
     if (entitiesAmount.length <= 2) {
       await db.query("BEGIN");
 
