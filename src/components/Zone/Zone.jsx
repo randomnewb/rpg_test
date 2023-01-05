@@ -12,11 +12,13 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
 const Main = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const zoneIdToName = ["None", "Forest", "Mountain"];
 
   // Psuedo-loading so that there is no flashing when components re-render/grabbed from the server
   const [loading, setLoading] = useState(true);
@@ -46,13 +48,13 @@ const Main = () => {
 
   // Updates the user's current zone on page refresh
 
-  useEffect(() => {
-    // dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
+  const searchForEntities = () => {
     dispatch({ type: "POST_SPAWN", payload: user.current_zone });
-  }, []);
+  };
 
   useEffect(() => {
     setTimeout(() => setLoading(false), loadTime);
+    dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
   }, []);
 
   // useEffect will need to run again when dispatch is run
@@ -225,22 +227,36 @@ const Main = () => {
   // };
 
   if (loading) {
-    return <div>Traveling...</div>;
+    return (
+      <div>
+        <Typography>Traveling...</Typography>
+      </div>
+    );
   }
 
   return (
     <div>
       <div>
-        <span>The current zone is: {JSON.stringify(user.current_zone)}</span>
+        <Typography>
+          <Typography>
+            The current zone is: {zoneIdToName[user.current_zone]}
+          </Typography>
+        </Typography>
         <br />
         <br />
-        <span>Current Player State is: {JSON.stringify(user.state)}</span>
+        <Typography>
+          Current Player State: {JSON.stringify(user.state)}
+        </Typography>
+        <br />
+        <br />
+        <Button onClick={searchForEntities}> Wander</Button>
+        <br />
+        <br />
         {/* <span>{JSON.stringify(spawnEntities)}</span> */}
       </div>
       {showEntities && (
         <div id="showEntities">
-          {JSON.stringify(spawn)}
-          {/* 
+          {/* <Typography>{JSON.stringify(spawn)}</Typography> */}
           {spawn.map((entity) => (
             <Button
               // onClick={interactEntity}
@@ -251,7 +267,7 @@ const Main = () => {
             >
               {entity.name}
             </Button>
-          ))} */}
+          ))}
         </div>
       )}
       {showInteraction && (

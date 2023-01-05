@@ -2,10 +2,13 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { Button, Typography } from "@mui/material";
 
 const World = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const zoneIdToName = ["None", "Forest", "Mountain"];
 
   // const zone = useSelector((store) => store.zone);
   const user = useSelector((store) => store.user);
@@ -23,16 +26,16 @@ const World = () => {
   return (
     <div>
       <div>
-        <span>Zone is: {JSON.stringify(user.current_zone)}</span>
+        <Typography>Zone is: {zoneIdToName[user.current_zone]}</Typography>
       </div>
 
       <div>
-        <button id="1" onClick={changeZone}>
-          Zone 1
-        </button>
-        <button id="2" onClick={changeZone}>
-          Zone 2
-        </button>
+        <Button id="1" onClick={changeZone}>
+          Forest
+        </Button>
+        <Button id="2" onClick={changeZone}>
+          Mountain
+        </Button>
       </div>
     </div>
   );

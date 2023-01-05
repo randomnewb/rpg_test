@@ -17,7 +17,7 @@ import LoginPage from "../LoginPage/LoginPage";
 import RegisterPage from "../RegisterPage/RegisterPage";
 import World from "../World/World";
 import Inventory from "../Inventory/Inventory";
-import Main from "../Main/Main";
+import Zone from "../Zone/Zone";
 
 import "./App.css";
 
@@ -56,7 +56,7 @@ function App() {
             </ProtectedRoute>
 
             <ProtectedRoute exact path="/zone">
-              <Main />
+              <Zone />
             </ProtectedRoute>
 
             <ProtectedRoute exact path="/inventory">

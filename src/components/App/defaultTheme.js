@@ -20,6 +20,14 @@ const defaultTheme = {
     },
   },
   components: {
+    MuiTypography: {
+      defaultProps: {
+        color: "#FFFFFF",
+        // style: {
+        //   color: "#FFFFFF",
+        // },
+      },
+    },
     MuiButton: {
       defaultProps: {
         variant: "contained",
