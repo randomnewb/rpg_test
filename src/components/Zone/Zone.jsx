@@ -39,7 +39,7 @@ const Main = () => {
     // Should do two dispatches
     // Change the user's state (state)
     // Set the user's current interacted entity (spawn_id)
-    dispatch({ type: "UPDATE_USER_STATE", payload: "interacting" });
+    dispatch({ type: "UPDATE_USER_STATE", payload: { state: "interacting" } });
   };
 
   // Store

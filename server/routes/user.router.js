@@ -35,6 +35,35 @@ router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
   }
 });
 
+/**
+ * UPDATE state for user
+ */
+
+router.put("/state", rejectUnauthenticated, async (req, res) => {
+  console.log("body", req.body, "user", req.user.id);
+
+  const db = await pool.connect();
+
+  try {
+    await db.query("BEGIN");
+
+    const sql = `UPDATE "user"
+    SET state=$1
+    WHERE id=$2;`;
+
+    await db.query(sql, [req.body.state, req.user.id]);
+    await db.query("COMMIT");
+
+    res.sendStatus(201);
+  } catch (e) {
+    await db.query("ROLLBACK");
+    console.log("Error updating user state", e);
+    res.sendStatus(500);
+  } finally {
+    db.release();
+  }
+});
+
 // Handles Ajax request for user information if user is authenticated
 router.get("/", rejectUnauthenticated, (req, res) => {
   // Send back user object from the session (previously queried from the database)
