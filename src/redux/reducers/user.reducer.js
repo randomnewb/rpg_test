@@ -6,6 +6,8 @@ const userReducer = (state = {}, action) => {
       return {};
     case "SET_CURRENT_USER_ZONE":
       return { currentZone: action.payload };
+    case "SET_USER_STATE":
+      return { state: action.payload };
     default:
       return state;
   }

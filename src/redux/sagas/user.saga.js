@@ -4,6 +4,7 @@ import { put, takeLatest } from "redux-saga/effects";
 function* userSaga() {
   yield takeLatest("FETCH_USER", fetchUser);
   yield takeLatest("UPDATE_CURRENT_USER_ZONE", setCurrentUserZone);
+  yield takeLatest("UPDATE_USER_STATE", setUserState);
 }
 // worker Saga: will be fired on "FETCH_USER" actions
 function* fetchUser() {
@@ -35,6 +36,17 @@ function* setCurrentUserZone(action) {
   } catch (e) {
     console.log("Failed to set current zone", e);
     alert("Couldn't update current zone");
+  }
+}
+
+function* setUserState(action) {
+  console.log("User state is", action.payload);
+  try {
+    const state = yield axios.put(`/api/user/state/${action.payload}`);
+    yield put({ type: "SET_USER_STATE", payload: state.data });
+  } catch (e) {
+    console.log("Failed to update user state", e);
+    alert("Couldn't update user state");
   }
 }
 

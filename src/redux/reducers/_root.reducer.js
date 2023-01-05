@@ -1,7 +1,6 @@
 import { combineReducers } from "redux";
 import errors from "./errors.reducer";
 import user from "./user.reducer";
-import zone from "./zone.reducer";
 import entity from "./entity.reducer";
 import spawn from "./spawn.reducer";
 
@@ -14,7 +13,6 @@ import spawn from "./spawn.reducer";
 const rootReducer = combineReducers({
   errors, // contains registrationMessage and loginMessage
   user, // will have an id and username if someone is logged in
-  zone, // stores zone information
   entity, // stores entity information
   spawn, // stores spawned entities
 });

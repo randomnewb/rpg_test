@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
+import Interaction from "../Interaction/Interaction";
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -29,12 +30,17 @@ const Main = () => {
 
   let loadTime = randomNumRange(600, 700);
 
-  // For showing certain user interaction areas
-  const [showEntities, setShowEntities] = useState(true);
-  const [showInteraction, setShowInteraction] = useState(false);
-
   // Holds the currently spawned entities
   // const [spawnEntities, setSpawnEntities] = useState(spawn);
+
+  const interactEntity = (e) => {
+    console.log(e.target.id);
+
+    // Should do two dispatches
+    // Change the user's state (state)
+    // Set the user's current interacted entity (spawn_id)
+    dispatch({ type: "UPDATE_USER_STATE", payload: "interacting" });
+  };
 
   // Store
   // const entity = useSelector((store) => store.entity);
@@ -254,12 +260,12 @@ const Main = () => {
         <br />
         {/* <span>{JSON.stringify(spawnEntities)}</span> */}
       </div>
-      {showEntities && (
+      {user.state === "observing" && (
         <div id="showEntities">
           {/* <Typography>{JSON.stringify(spawn)}</Typography> */}
           {spawn.map((entity) => (
             <Button
-              // onClick={interactEntity}
+              onClick={interactEntity}
               key={entity.spawn_id}
               id={entity.spawn_id}
               value={entity.current_health}
@@ -270,35 +276,7 @@ const Main = () => {
           ))}
         </div>
       )}
-      {showInteraction && (
-        <div id="showInteraction">
-          {/* {entityProperties.type === "mob" && (
-            <Button id="attack" onClick={performAction}>
-              Attack
-            </Button>
-          )}
-          {entityProperties.type === "tree" && (
-            <Button id="chop" onClick={performAction}>
-              Chop
-            </Button>
-          )}
-          {entityProperties.type === "rock" && (
-            <Button id="mine" onClick={performAction}>
-              Mine
-            </Button>
-          )} */}
-          <span>
-            {/* Currently interacting with {JSON.stringify(entity.properties.name)} */}
-            <br />
-            <br />
-            {/* Entity Health: {JSON.stringify(entity.health)} */}
-            <br />
-            <br />
-            {/* Current entity is: {JSON.stringify(entity)} */}
-            {/* {JSON.stringify(playerState)} */}
-          </span>
-        </div>
-      )}
+      {user.state === "interacting" && <Interaction />}
     </div>
   );
 };
