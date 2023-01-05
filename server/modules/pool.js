@@ -8,17 +8,9 @@ if (process.env.DATABASE_URL) {
   // https://github.com/brianc/node-pg-pool
   const params = url.parse(process.env.DATABASE_URL);
   const auth = params.auth.split(":");
+}
 
-  // this creates the pool that will be shared by all other modules
-  const pool = new pg.Pool(config);
-
-  // the pool with emit an error on behalf of any idle clients
-  // it contains if a backend error or network partition happens
-  pool.on("error", (err) => {
-    console.log("Unexpected error on idle client", err);
-    process.exit(-1);
-  });
-
+if (process.env.DATABASE_URL) {
   config = {
     user: auth[0],
     password: auth[1],
@@ -47,6 +39,18 @@ else if (process.env.DATABASE_PASSWORD) {
     port: 5432,
     user: "postgres",
     database: "rpg_app",
+  });
+}
+
+if (process.env.DATABASE_URL) {
+  // this creates the pool that will be shared by all other modules
+  const pool = new pg.Pool(config);
+
+  // the pool with emit an error on behalf of any idle clients
+  // it contains if a backend error or network partition happens
+  pool.on("error", (err) => {
+    console.log("Unexpected error on idle client", err);
+    process.exit(-1);
   });
 }
 
