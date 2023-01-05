@@ -25,7 +25,7 @@ if (process.env.DATABASE_URL) {
 // When we're running this app on our own computer
 // we'll connect to the postgres database that is
 // also running on our computer (localhost)
-else if (process.env.DATABASE_PASSWORD) {
+if (process.env.DATABASE_PASSWORD) {
   pool = new pg.Pool({
     host: "localhost",
     port: 5432,
