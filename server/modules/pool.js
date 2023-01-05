@@ -20,7 +20,7 @@ if (process.env.DATABASE_URL) {
   };
 
   // this creates the pool that will be shared by all other modules
-  const pool = new pg.Pool(config);
+  pool = new pg.Pool(config);
 
   // the pool with emit an error on behalf of any idle clients
   // it contains if a backend error or network partition happens
