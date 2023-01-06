@@ -26,21 +26,21 @@ const Main = () => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  let loadTime = randomNumRange(400, 600);
-
-  // Holds the currently spawned entities
-  // const [spawnEntities, setSpawnEntities] = useState(spawn);
+  let loadTime = randomNumRange(500, 700);
 
   const interactEntity = (e) => {
     console.log(e.target.id);
 
-    // Should do two dispatches
-    // Change the user's state (state)
-    // Set the user's current interacted entity (spawn_id)
     dispatch({
       type: "UPDATE_USER_STATE",
-      payload: { userState: "interacting" },
+      payload: { userState: "interacting", entityId: e.target.id },
     });
+
+    dispatch({
+      type: "FETCH_ENTITY_DETAIL",
+      payload: e.target.id,
+    });
+
     dispatch({
       type: "FETCH_USER",
     });
@@ -59,20 +59,13 @@ const Main = () => {
   // Updates the user's current zone on page refresh
 
   const searchForEntities = () => {
-    dispatch({ type: "POST_SPAWN", payload: user.current_zone });
+    dispatch({ type: "POST_SPAWN_BY_ZONE", payload: user.current_zone });
   };
 
   useEffect(() => {
     setTimeout(() => setLoading(false), loadTime);
-    dispatch({ type: "FETCH_SPAWN", payload: user.current_zone });
+    dispatch({ type: "FETCH_SPAWN_BY_ZONE", payload: user.current_zone });
   }, []);
-
-  // useEffect will need to run again when dispatch is run
-
-  // useEffect(() => {
-  //   console.log("current spawn", spawn);
-  //   setSpawnEntities(spawn);
-  // }, []);
 
   // const spawnRandomEntities = (minSpawn, maxSpawn) => {
   //   let numberOfEntities = randomNumRange(minSpawn, maxSpawn);

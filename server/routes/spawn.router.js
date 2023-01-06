@@ -8,7 +8,7 @@ const {
 /**
  * FETCH current entities in a zone
  */
-router.get("/:id", rejectUnauthenticated, async (req, res) => {
+router.get("/zone/:id", rejectUnauthenticated, async (req, res) => {
   const db = await pool.connect();
 
   try {
@@ -42,7 +42,7 @@ router.get("/:id", rejectUnauthenticated, async (req, res) => {
  * The POST takes all that information and INSERTS the newly made entity into the database
  */
 
-router.post("/:id", rejectUnauthenticated, async (req, res) => {
+router.post("/zone/:id", rejectUnauthenticated, async (req, res) => {
   db = await pool.connect();
 
   try {
@@ -97,8 +97,7 @@ const checkForEntities = async (zone_id, db) => {
 };
 
 const getEntitiesInZone = async (zone_id, db) => {
-  // db = await pool.connect();
-  // 1st step, first query, using the zone_id the player entered
+  // Using the zone_id the player entered
   // We grab all entities that could spawn in that zone
   try {
     const sql_spawnableEntities = `
@@ -117,7 +116,6 @@ const getEntitiesInZone = async (zone_id, db) => {
 };
 
 const chooseRandomEntity = async (entitiesInZone, db) => {
-  // db = await pool.connect();
   try {
     //   /*
     //   Article about weighted random

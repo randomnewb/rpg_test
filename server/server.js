@@ -11,6 +11,7 @@ const passport = require("./strategies/user.strategy");
 const userRouter = require("./routes/user.router");
 const zoneRouter = require("./routes/zone.router");
 const spawnRouter = require("./routes/spawn.router");
+const entityRouter = require("./routes/entity.router");
 
 // Body parser middleware
 app.use(bodyParser.json());
@@ -27,6 +28,7 @@ app.use(passport.session());
 app.use("/api/user", userRouter);
 app.use("/api/zone", zoneRouter);
 app.use("/api/spawn", spawnRouter);
+app.use("/api/entity", entityRouter);
 
 // Serve static files
 app.use(express.static("build"));

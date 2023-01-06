@@ -8,6 +8,7 @@ const Interaction = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((store) => store.user);
+  const entity = useSelector((store) => store.entity);
 
   const performAction = (e) => {
     console.log(e.target.id);
@@ -19,6 +20,9 @@ const Interaction = () => {
       type: "UPDATE_USER_STATE",
       payload: { userState: "observing" },
     });
+
+    dispatch({ type: "FETCH_SPAWN_BY_ZONE", payload: user.current_zone });
+
     dispatch({
       type: "FETCH_USER",
     });
@@ -26,7 +30,8 @@ const Interaction = () => {
 
   return (
     <div>
-      <Typography> Hello world</Typography>
+      <Typography>Name: {entity.name}</Typography>
+      <Typography>Health: {entity.current_health}</Typography>
       {/* {entityProperties.type === "mob" && ( */}
       <Button id="attack" onClick={performAction}>
         Attack
@@ -47,7 +52,7 @@ const Interaction = () => {
       </Button>
       {/* )} */}
       <span>
-        {/* Currently interacting with {JSON.stringify(entity.properties.name)}
+        {/* 
         <br />
         <br />
         Entity Health: {JSON.stringify(entity.health)}

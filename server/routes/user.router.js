@@ -13,18 +13,17 @@ const router = express.Router();
  */
 
 router.put("/state", rejectUnauthenticated, async (req, res) => {
-  console.log("body", req.body, "user", req.user.id);
-
   const db = await pool.connect();
 
   try {
     await db.query("BEGIN");
 
     const sql = `UPDATE "user"
-    SET current_state=$1
+    SET current_state=$1,
+    spawn_id=$3
     WHERE id=$2;`;
 
-    await db.query(sql, [req.body.userState, req.user.id]);
+    await db.query(sql, [req.body.userState, req.user.id, req.body.entityId]);
     await db.query("COMMIT");
 
     res.sendStatus(201);
