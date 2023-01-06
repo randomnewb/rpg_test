@@ -81,6 +81,8 @@ router.post("/zone/:id", rejectUnauthenticated, async (req, res) => {
 });
 
 const checkForEntities = async (zone_id, db) => {
+  // Check how many entities are currently in a zone
+  // This will be used to check and thus limit how many entities spawn
   try {
     const sql_checkForEntities = `
     SELECT * FROM spawn

@@ -46,23 +46,92 @@ router.put("/:id", async (req, res) => {
   const db = await pool.connect();
 
   try {
+    const healthOfEntity = await checkHealthOfEntity(req.params.id, db);
+    const damageCalculation = await performDamageCalculation(
+      req.params.id,
+      healthOfEntity,
+      db
+    );
+
+    console.log("health after calculation", damageCalculation);
+
     await db.query("BEGIN");
 
     const sql = `
         UPDATE spawn
-        SET current_health=0
+        SET current_health=$2
         WHERE id=$1
     `;
 
-    result = await db.query(sql, [req.params.id]);
+    result = await db.query(sql, [req.params.id, damageCalculation]);
+
+    await db.query("COMMIT");
 
     res.status(201).send(result);
   } catch (err) {
     console.error(err);
-    sendStatus(500);
+    res.sendStatus(500);
   } finally {
     db.release();
   }
 });
+
+// Check health of entity
+const checkHealthOfEntity = async (entityId, db) => {
+  // Get health of the entity
+  try {
+    const sql_checkHealthOfEntity = `
+      SELECT id, current_health
+      FROM spawn
+      WHERE id=$1;
+    `;
+
+    const checkHealthOfEntity = await db.query(sql_checkHealthOfEntity, [
+      entityId,
+    ]);
+
+    return checkHealthOfEntity.rows[0].current_health;
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+};
+
+// For now, just subtract 1 health from entity
+// If the entity's health is equal to or less than 0
+// Remove the entity
+// Or else just send the entity with updated health
+const performDamageCalculation = async (entityId, entityHealth, db) => {
+  console.log("entity id", entityId, "entityHealth", entityHealth);
+
+  entityHealth = entityHealth - 1;
+
+  console.log("damage after calculation inside function", entityHealth);
+  // if (entityHealth <= 0) {
+  //   return entityHealth;
+  // }
+
+  try {
+    const sql_performDamageCalculation = `
+    UPDATE spawn
+    SET current_health=$2
+    WHERE id=$1;
+`;
+
+    const damageCalculation = await db.query(sql_performDamageCalculation, [
+      entityId,
+      entityHealth,
+    ]);
+
+    await db.query("COMMIT");
+
+    console.log(damageCalculation.rows[0]);
+
+    return damageCalculation.rows[0];
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+};
 
 module.exports = router;
