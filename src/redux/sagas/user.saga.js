@@ -40,10 +40,9 @@ function* setCurrentUserZone(action) {
 }
 
 function* setUserState(action) {
-  console.log("User state is", action.payload);
   try {
-    const state = yield axios.put("/api/user/state/", action.payload);
-    yield put({ type: "SET_USER_STATE", payload: state.data });
+    const userState = yield axios.put("/api/user/state/", action.payload);
+    yield put({ type: "SET_USER_STATE", payload: userState.data });
   } catch (e) {
     console.log("Failed to update user state", e);
     alert("Couldn't update user state");

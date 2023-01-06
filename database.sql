@@ -10,7 +10,7 @@ CREATE TABLE "user" (
     "username" VARCHAR (80) UNIQUE NOT NULL,
     "password" VARCHAR (1000) NOT NULL,
 	"current_zone" INT REFERENCES "zone",
-	"state" VARCHAR (255) DEFAULT 'observing'
+	"current_state" VARCHAR (255) DEFAULT 'observing'
 );
 
 

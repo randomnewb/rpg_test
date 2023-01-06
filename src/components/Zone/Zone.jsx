@@ -11,13 +11,11 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
 import Interaction from "../Interaction/Interaction";
 
 const Main = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const zoneIdToName = ["None", "Forest", "Mountain"];
 
@@ -28,7 +26,7 @@ const Main = () => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  let loadTime = randomNumRange(600, 700);
+  let loadTime = randomNumRange(400, 600);
 
   // Holds the currently spawned entities
   // const [spawnEntities, setSpawnEntities] = useState(spawn);
@@ -39,7 +37,13 @@ const Main = () => {
     // Should do two dispatches
     // Change the user's state (state)
     // Set the user's current interacted entity (spawn_id)
-    dispatch({ type: "UPDATE_USER_STATE", payload: { state: "interacting" } });
+    dispatch({
+      type: "UPDATE_USER_STATE",
+      payload: { userState: "interacting" },
+    });
+    dispatch({
+      type: "FETCH_USER",
+    });
   };
 
   // Store
@@ -235,7 +239,7 @@ const Main = () => {
   if (loading) {
     return (
       <div>
-        <Typography>Traveling...</Typography>
+        <Typography>Loading...</Typography>
       </div>
     );
   }
@@ -251,17 +255,18 @@ const Main = () => {
         <br />
         <br />
         <Typography>
-          Current Player State: {JSON.stringify(user.state)}
+          Current Player State: {JSON.stringify(user.current_state)}
         </Typography>
         <br />
         <br />
-        <Button onClick={searchForEntities}> Wander</Button>
-        <br />
-        <br />
+
         {/* <span>{JSON.stringify(spawnEntities)}</span> */}
       </div>
-      {user.state === "observing" && (
+      {user.current_state === "observing" && (
         <div id="showEntities">
+          <Button onClick={searchForEntities}> Wander</Button>
+          <br />
+          <br />
           {/* <Typography>{JSON.stringify(spawn)}</Typography> */}
           {spawn.map((entity) => (
             <Button
@@ -276,7 +281,7 @@ const Main = () => {
           ))}
         </div>
       )}
-      {user.state === "interacting" && <Interaction />}
+      {user.current_state === "interacting" && <Interaction />}
     </div>
   );
 };

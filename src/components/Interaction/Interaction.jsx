@@ -5,10 +5,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { Typography, Button } from "@mui/material";
 
 const Interaction = () => {
+  const dispatch = useDispatch();
+
   const user = useSelector((store) => store.user);
 
   const performAction = (e) => {
     console.log(e.target.id);
+  };
+
+  const abandonEvent = () => {
+    console.log("Abandoning event...");
+    dispatch({
+      type: "UPDATE_USER_STATE",
+      payload: { userState: "observing" },
+    });
+    dispatch({
+      type: "FETCH_USER",
+    });
   };
 
   return (
@@ -29,6 +42,10 @@ const Interaction = () => {
         Mine
       </Button>
       {/* )} */}
+      <Button id="abandon" onClick={abandonEvent}>
+        Abandon Event
+      </Button>
+      {/* )} */}
       <span>
         {/* Currently interacting with {JSON.stringify(entity.properties.name)}
         <br />
@@ -37,7 +54,7 @@ const Interaction = () => {
         <br />
         <br />
         Current entity is: {JSON.stringify(entity)} */}
-        {JSON.stringify(user.state)}
+        {/* {JSON.stringify(user.current_state)} */}
       </span>
     </div>
   );
