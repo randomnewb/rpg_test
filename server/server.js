@@ -9,7 +9,6 @@ const passport = require("./strategies/user.strategy");
 
 // Route includes
 const userRouter = require("./routes/user.router");
-const zoneRouter = require("./routes/zone.router");
 const spawnRouter = require("./routes/spawn.router");
 const entityRouter = require("./routes/entity.router");
 
@@ -26,7 +25,6 @@ app.use(passport.session());
 
 /* Routes */
 app.use("/api/user", userRouter);
-app.use("/api/zone", zoneRouter);
 app.use("/api/spawn", spawnRouter);
 app.use("/api/entity", entityRouter);
 

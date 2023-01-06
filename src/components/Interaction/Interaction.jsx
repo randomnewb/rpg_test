@@ -1,7 +1,5 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import { Typography, Button } from "@mui/material";
 
 const Interaction = () => {
@@ -12,6 +10,7 @@ const Interaction = () => {
 
   const performAction = (e) => {
     console.log(e.target.id);
+    dispatch({ type: "INTERACT_WITH_ENTITY", payload: user.spawn_id });
   };
 
   const abandonEvent = () => {
@@ -22,45 +21,45 @@ const Interaction = () => {
     });
 
     dispatch({ type: "FETCH_SPAWN_BY_ZONE", payload: user.current_zone });
-
-    dispatch({
-      type: "FETCH_USER",
-    });
   };
+
+  useEffect(() => {
+    dispatch({ type: "FETCH_ENTITY_DETAIL", payload: user.spawn_id });
+  }, []);
 
   return (
     <div>
       <Typography>Name: {entity.name}</Typography>
       <Typography>Health: {entity.current_health}</Typography>
-      {/* {entityProperties.type === "mob" && ( */}
-      <Button id="attack" onClick={performAction}>
-        Attack
-      </Button>
-      {/* )} */}
-      {/* {entityProperties.type === "tree" && ( */}
-      <Button id="chop" onClick={performAction}>
-        Chop
-      </Button>
-      {/* )} */}
-      {/* {entityProperties.type === "rock" && ( */}
-      <Button id="mine" onClick={performAction}>
-        Mine
-      </Button>
-      {/* )} */}
+      <br />
+      <br />
+      {entity.type === "mob" && (
+        <Button id="attack" onClick={performAction}>
+          Attack
+        </Button>
+      )}
+      {entity.type === "woodcutting" && (
+        <Button id="chop" onClick={performAction}>
+          Chop
+        </Button>
+      )}
+      {entity.type === "mining" && (
+        <Button id="mine" onClick={performAction}>
+          Mine
+        </Button>
+      )}
       <Button id="abandon" onClick={abandonEvent}>
         Abandon Event
       </Button>
       {/* )} */}
-      <span>
-        {/* 
+      {/* 
         <br />
         <br />
         Entity Health: {JSON.stringify(entity.health)}
         <br />
         <br />
         Current entity is: {JSON.stringify(entity)} */}
-        {/* {JSON.stringify(user.current_state)} */}
-      </span>
+      {/* {JSON.stringify(user.current_state)} */}
     </div>
   );
 };

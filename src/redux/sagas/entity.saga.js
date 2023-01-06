@@ -3,16 +3,26 @@ import { put, takeLatest } from "redux-saga/effects";
 
 function* entitySaga() {
   yield takeLatest("FETCH_ENTITY_DETAIL", fetchEntityDetail);
+  yield takeLatest("INTERACT_WITH_ENTITY", interactWithEntity);
 }
 
 function* fetchEntityDetail(action) {
-  console.log("entity detail is", action.payload);
   try {
     const entity = yield axios.get(`/api/entity/${action.payload}`);
     yield put({ type: "SET_ENTITY", payload: entity.data });
   } catch (e) {
     console.log("Error fetching entity detail", e);
     alert("Error fetching specific entity");
+  }
+}
+
+function* interactWithEntity(action) {
+  try {
+    const entity = yield axios.put(`/api/entity/${action.payload}`);
+    yield put({ type: "FETCH_ENTITY_DETAIL", payload: action.payload });
+  } catch (e) {
+    console.log("Error interacting with entity", e);
+    alert("Error interacting with entity");
   }
 }
 
