@@ -29,8 +29,6 @@ const Main = () => {
   let loadTime = randomNumRange(550, 700);
 
   const interactEntity = (e) => {
-    console.log(e.target.id);
-
     dispatch({
       type: "UPDATE_USER_STATE",
       payload: { userState: "interacting", entityId: e.target.id },

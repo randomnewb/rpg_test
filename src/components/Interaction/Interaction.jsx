@@ -9,7 +9,6 @@ const Interaction = () => {
   const entity = useSelector((store) => store.entity);
 
   const performAction = (e) => {
-    console.log(e.target.id);
     dispatch({ type: "INTERACT_WITH_ENTITY", payload: user.spawn_id });
 
     // if (user.current_state === "observing") {
@@ -18,7 +17,6 @@ const Interaction = () => {
   };
 
   const abandonEvent = () => {
-    console.log("Abandoning event...");
     dispatch({
       type: "UPDATE_USER_STATE",
       payload: { userState: "observing" },

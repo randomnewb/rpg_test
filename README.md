@@ -88,4 +88,8 @@ https://codesandbox.io/s/mui-theme-css-hover-example-n8ou5?file=/demo.js
 
 ## Bugs
 
-    [ ] None at this time
+    [ ] User 'interating' too quickly causes request problems
+
+## Possible solutions
+
+    [ ] Prevent user from clicking again until request is complete
