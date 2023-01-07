@@ -27,6 +27,10 @@ const Interaction = () => {
     dispatch({ type: "FETCH_ENTITY_DETAIL", payload: user.spawn_id });
   }, []);
 
+  // useEffect(() => {
+  //   dispatch({ type: "FETCH_USER" });
+  // }, []);
+
   return (
     <div>
       <Typography>Name: {entity.name}</Typography>
