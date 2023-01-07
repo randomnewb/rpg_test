@@ -20,7 +20,7 @@ router.get("/:id", rejectUnauthenticated, async (req, res) => {
         WHERE 
         spawn.stat_id = stat.id
         AND spawn.id = $1;
-    `;
+        `;
 
     result = await db.query(sql, [req.params.id]);
 
@@ -31,6 +31,7 @@ router.get("/:id", rejectUnauthenticated, async (req, res) => {
   } finally {
     db.release();
   }
+  // }
 });
 
 /**
@@ -40,6 +41,10 @@ router.put("/:id", async (req, res) => {
   // Get the entity by its id
   // Subtract the entity's current_health by 1
   // Return the entity
+  // console.log("what is req.params.id ?", req.params.id);
+  if (req.params.id === null) {
+    res.sendStatus(200);
+  }
 
   const db = await pool.connect();
 
@@ -66,7 +71,6 @@ router.put("/:id", async (req, res) => {
       res.status(201).send(resetState);
     }
 
-    console.log("what is damage calc", damageCalculation.current_health);
     if (damageCalculation.current_health >= 1) {
       res.status(201).send(damageCalculation);
     }
@@ -105,8 +109,6 @@ const checkHealthOfEntity = async (entityId, db) => {
 // Remove the entity
 // Or else just send the entity with updated health
 const performDamageCalculation = async (entityId, entityHealth, db) => {
-  console.log("entityId is", parseInt(entityId), "entityHealth", entityHealth);
-
   entityId = parseInt(entityId);
 
   entityHealth = entityHealth - 1;

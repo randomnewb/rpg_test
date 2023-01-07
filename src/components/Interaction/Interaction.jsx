@@ -11,6 +11,10 @@ const Interaction = () => {
   const performAction = (e) => {
     console.log(e.target.id);
     dispatch({ type: "INTERACT_WITH_ENTITY", payload: user.spawn_id });
+
+    // if (user.current_state === "observing") {
+    //   setTimeout(() => forceUpdate(), 500);
+    // }
   };
 
   const abandonEvent = () => {
