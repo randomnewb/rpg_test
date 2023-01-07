@@ -41,8 +41,6 @@ router.put("/:id", async (req, res) => {
   // Subtract the entity's current_health by 1
   // Return the entity
 
-  console.log(req.params.id);
-
   const db = await pool.connect();
 
   try {
@@ -53,22 +51,27 @@ router.put("/:id", async (req, res) => {
       db
     );
 
-    console.log("health after calculation", damageCalculation);
+    // console.log("health after calculation", damageCalculation);
 
-    await db.query("BEGIN");
+    if (damageCalculation <= 0) {
+      const sql_setUserState = `
+      UPDATE "user" 
+      SET current_state='observing'
+      WHERE id=$1;
+      `;
 
-    const sql = `
-        UPDATE spawn
-        SET current_health=$2
-        WHERE id=$1
-    `;
+      await db.query(sql_setUserState, [req.user.id]);
 
-    result = await db.query(sql, [req.params.id, damageCalculation]);
+      let resetState = { current_state: "observing" };
+      res.status(201).send(resetState);
+    }
 
-    await db.query("COMMIT");
-
-    res.status(201).send(result);
+    console.log("what is damage calc", damageCalculation.current_health);
+    if (damageCalculation.current_health >= 1) {
+      res.status(201).send(damageCalculation);
+    }
   } catch (err) {
+    await db.query("ROLLBACK");
     console.error(err);
     res.sendStatus(500);
   } finally {
@@ -102,35 +105,57 @@ const checkHealthOfEntity = async (entityId, db) => {
 // Remove the entity
 // Or else just send the entity with updated health
 const performDamageCalculation = async (entityId, entityHealth, db) => {
-  console.log("entity id", entityId, "entityHealth", entityHealth);
+  console.log("entityId is", parseInt(entityId), "entityHealth", entityHealth);
+
+  entityId = parseInt(entityId);
 
   entityHealth = entityHealth - 1;
 
-  console.log("damage after calculation inside function", entityHealth);
-  // if (entityHealth <= 0) {
-  //   return entityHealth;
-  // }
+  if (entityHealth <= 0) {
+    try {
+      await db.query("BEGIN");
 
-  try {
-    const sql_performDamageCalculation = `
-    UPDATE spawn
-    SET current_health=$2
-    WHERE id=$1;
-`;
+      const sql_performDamageCalculation = `
+      DELETE FROM spawn
+      WHERE id=$1;
+      `;
 
-    const damageCalculation = await db.query(sql_performDamageCalculation, [
-      entityId,
-      entityHealth,
-    ]);
+      await db.query(sql_performDamageCalculation, [entityId]);
 
-    await db.query("COMMIT");
+      await db.query("COMMIT");
 
-    console.log(damageCalculation.rows[0]);
+      let result = 0;
 
-    return damageCalculation.rows[0];
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
+      return result;
+    } catch (e) {
+      await db.query("ROLLBACK");
+      console.log(e);
+      res.sendStatus(500);
+    }
+  } else if (entityHealth >= 1) {
+    try {
+      await db.query("BEGIN");
+
+      const sql_performDamageCalculation = `
+        UPDATE spawn
+        SET current_health=$2
+        WHERE id=$1
+        RETURNING *;
+        `;
+
+      const damageCalculation = await db.query(sql_performDamageCalculation, [
+        entityId,
+        entityHealth,
+      ]);
+
+      await db.query("COMMIT");
+
+      return damageCalculation.rows[0];
+    } catch (e) {
+      await db.query("ROLLBACK");
+      console.log(e);
+      res.sendStatus(500);
+    }
   }
 };
 

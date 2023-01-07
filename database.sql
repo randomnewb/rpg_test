@@ -9,7 +9,7 @@ CREATE TABLE "user" (
     "id" SERIAL PRIMARY KEY,
     "username" VARCHAR (80) UNIQUE NOT NULL,
     "password" VARCHAR (1000) NOT NULL,
-	"current_zone" INT REFERENCES "zone",
+	"current_zone" INT REFERENCES "zone" DEFAULT 1,
 	"current_state" VARCHAR (255) DEFAULT 'observing'
 );
 
@@ -63,7 +63,7 @@ VALUES('Zombie', 'mob', 2, 5), ('Oak Tree', 'woodcutting', 2, 3), ('Boulder', 'm
 -- PostgresQL is struggling to create it when there's no reference
 
 ALTER TABLE "user"
-ADD "spawn_id" INT REFERENCES "spawn";
+ADD "spawn_id" INT REFERENCES "spawn" ON DELETE SET NULL;
 
 -- Sample Data
 

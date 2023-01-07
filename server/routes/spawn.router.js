@@ -165,7 +165,6 @@ const chooseRandomEntity = async (entitiesInZone, db) => {
       randomChosenEntity.zone_id,
     ]);
 
-    // db.release();
     return chosenEntity.rows[0];
   } catch (error) {
     res.sendStatus(500);
