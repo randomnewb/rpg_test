@@ -33,13 +33,16 @@ function* fetchEntityDetail(action) {
 function* interactWithEntity(action) {
   try {
     const entity = yield axios.put(`/api/entity/${action.payload}`);
-
-    if (entity.data.current_state === "observing") {
+    console.log("what comes back from entity interact", entity.data);
+    if (entity.data.current_state === "observing" || undefined) {
+      console.log("entity.data.current_state is", entity.data.current_state);
       yield put({
         type: "UPDATE_USER_STATE",
         payload: { userState: "observing" },
       });
     } else {
+      console.log("current returning state is", entity.data.current_state);
+      console.log("this should not run");
       yield put({ type: "FETCH_ENTITY_DETAIL", payload: action.payload });
     }
   } catch (e) {

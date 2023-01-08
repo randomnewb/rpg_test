@@ -26,7 +26,7 @@ router.get("/:id", rejectUnauthenticated, async (req, res) => {
 
     res.status(200).send(result.rows[0]);
   } catch (err) {
-    console.error(err);
+    console.log(err);
     sendStatus(500);
   } finally {
     db.release();
@@ -41,24 +41,15 @@ router.put("/:id", async (req, res) => {
   // Get the entity by its id
   // Subtract the entity's current_health by 1
   // Return the entity
-  // console.log("what is req.params.id ?", req.params.id);
-  if (req.params.id === null) {
-    res.sendStatus(200);
-  }
 
   const db = await pool.connect();
 
-  try {
-    const healthOfEntity = await checkHealthOfEntity(req.params.id, db);
-    const damageCalculation = await performDamageCalculation(
-      req.params.id,
-      healthOfEntity,
-      db
-    );
+  const entityExists = await checkEntityExists(req.params.id, db);
 
-    // console.log("health after calculation", damageCalculation);
+  console.log("what is entityExists", entityExists);
 
-    if (damageCalculation <= 0) {
+  if (entityExists === undefined) {
+    try {
       const sql_setUserState = `
       UPDATE "user" 
       SET current_state='observing'
@@ -67,23 +58,68 @@ router.put("/:id", async (req, res) => {
 
       await db.query(sql_setUserState, [req.user.id]);
 
-      let resetState = { current_state: "observing" };
-      res.status(201).send(resetState);
+      res.send("observing");
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } finally {
+      db.release();
     }
+  } else if (req.params.id > 0) {
+    try {
+      const healthOfEntity = await checkHealthOfEntity(req.params.id, db);
+      const damageCalculation = await performDamageCalculation(
+        req.params.id,
+        healthOfEntity,
+        db
+      );
 
-    if (damageCalculation.current_health >= 1) {
-      res.status(201).send(damageCalculation);
+      if (damageCalculation <= 0) {
+        const sql_setUserState = `
+      UPDATE "user" 
+      SET current_state='observing'
+      WHERE id=$1;
+      `;
+
+        await db.query(sql_setUserState, [req.user.id]);
+
+        let resetState = { current_state: "observing" };
+        res.status(201).send(resetState);
+      }
+
+      if (damageCalculation.current_health >= 1) {
+        res.status(201).send(damageCalculation);
+      }
+    } catch (err) {
+      await db.query("ROLLBACK");
+      console.error(err);
+      res.sendStatus(500);
+    } finally {
+      db.release();
     }
-  } catch (err) {
-    await db.query("ROLLBACK");
-    console.error(err);
-    res.sendStatus(500);
-  } finally {
-    db.release();
   }
 });
 
-// Check health of entity
+const checkEntityExists = async (entityId, db) => {
+  // Check to see if the spawned entity the user is interacting with still exists
+  try {
+    const sql_checkEntityExists = `
+    SELECT id
+    FROM spawn
+    WHERE id=$1;
+    `;
+
+    const constCheckEntityExists = await db.query(sql_checkEntityExists, [
+      entityId,
+    ]);
+
+    return constCheckEntityExists.rows[0];
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+};
+
 const checkHealthOfEntity = async (entityId, db) => {
   // Get health of the entity
   try {
@@ -104,11 +140,11 @@ const checkHealthOfEntity = async (entityId, db) => {
   }
 };
 
-// For now, just subtract 1 health from entity
-// If the entity's health is equal to or less than 0
-// Remove the entity
-// Or else just send the entity with updated health
 const performDamageCalculation = async (entityId, entityHealth, db) => {
+  // For now, just subtract 1 health from entity
+  // If the entity's health is equal to or less than 0
+  // Remove the entity
+  // Or else just send the entity with updated health
   entityId = parseInt(entityId);
 
   entityHealth = entityHealth - 1;
