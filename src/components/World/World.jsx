@@ -2,6 +2,8 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
+import { ReactComponent as Forest } from "../../svg/forest.svg";
+import { ReactComponent as Mountain } from "../../svg/mountain.svg";
 
 const World = () => {
   const dispatch = useDispatch();
@@ -9,9 +11,7 @@ const World = () => {
 
   const zoneIdToName = ["None", "Forest", "Mountain"];
 
-  // const zone = useSelector((store) => store.zone);
   const user = useSelector((store) => store.user);
-  // const [currentZone, setCurrentZone] = useState(zone);
 
   const setZone = (zone) => {
     dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: zone });
@@ -25,15 +25,19 @@ const World = () => {
   return (
     <div>
       <div>
-        <Typography>Zone is: {zoneIdToName[user.current_zone]}</Typography>
+        <Typography>
+          {/* Zone is: {zoneIdToName[user.current_zone]} */}
+          Choose a Zone to travel to:
+        </Typography>
       </div>
 
       <div>
         <Button id="1" onClick={changeZone}>
-          Forest
+          Forest <Forest />
         </Button>
+        <br />
         <Button id="2" onClick={changeZone}>
-          Mountain
+          Mountain <Mountain />
         </Button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Typography, Button } from "@mui/material";
 
@@ -8,12 +8,18 @@ const Interaction = () => {
   const user = useSelector((store) => store.user);
   const entity = useSelector((store) => store.entity);
 
-  const performAction = (e) => {
-    dispatch({ type: "INTERACT_WITH_ENTITY", payload: user.spawn_id });
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
-    // if (user.current_state === "observing") {
-    //   setTimeout(() => forceUpdate(), 500);
-    // }
+  const disableButton = () => {
+    setButtonDisabled(true);
+    setTimeout(() => {
+      setButtonDisabled(false);
+    }, 500);
+  };
+
+  const performAction = (e) => {
+    disableButton();
+    dispatch({ type: "INTERACT_WITH_ENTITY", payload: user.spawn_id });
   };
 
   const abandonEvent = () => {
@@ -29,28 +35,25 @@ const Interaction = () => {
     dispatch({ type: "FETCH_ENTITY_DETAIL", payload: user.spawn_id });
   }, []);
 
-  // useEffect(() => {
-  //   dispatch({ type: "FETCH_USER" });
-  // }, []);
-
   return (
     <div>
       <Typography>Name: {entity.name}</Typography>
       <Typography>Health: {entity.current_health}</Typography>
       <br />
       <br />
+      <Typography>Choose an Action:</Typography>
       {entity.type === "mob" && (
-        <Button id="attack" onClick={performAction}>
+        <Button id="attack" disabled={buttonDisabled} onClick={performAction}>
           Attack
         </Button>
       )}
       {entity.type === "woodcutting" && (
-        <Button id="chop" onClick={performAction}>
+        <Button id="chop" disabled={buttonDisabled} onClick={performAction}>
           Chop
         </Button>
       )}
       {entity.type === "mining" && (
-        <Button id="mine" onClick={performAction}>
+        <Button id="mine" disabled={buttonDisabled} onClick={performAction}>
           Mine
         </Button>
       )}

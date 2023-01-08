@@ -62,33 +62,6 @@ const Main = () => {
   //   spawnRandomEntities(2, 5);
   // }, []);
 
-  // Reduce entityHealth by 1 on click, if the health is below 0 or at 1,
-  // switch back to the view that shows all entities
-  // const performAction = (act) => {
-  //   let damage = 1;
-
-  //   if (playerState.interaction !== "engaged") {
-  //     dispatch({
-  //       type: "SET_PLAYER_STATE",
-  //       payload: "engaged",
-  //     });
-  //   }
-  //   dispatch({
-  //     type: "SET_ENTITY_HEALTH",
-  //     payload: damage,
-  //   });
-
-  //   if (entity.health <= 0) {
-  //     dispatch({
-  //       type: "CLEAR_ENTITY",
-  //     });
-
-  //     dispatch({
-  //       type: "SET_PLAYER_STATE",
-  //       payload: "observing",
-  //     });
-  //   }
-
   if (loading) {
     return (
       <div>
@@ -100,23 +73,19 @@ const Main = () => {
   return (
     <div>
       <div>
-        <Typography>
-          <Typography>
-            The current zone is: {zoneIdToName[user.current_zone]}
-          </Typography>
-        </Typography>
-        <br />
-        <br />
-        <Typography>
-          {/* Current Player State: {JSON.stringify(user.current_state)} */}
-        </Typography>
+        <Typography>Current Zone: {zoneIdToName[user.current_zone]}</Typography>
       </div>
+
       {user.current_state === "observing" && (
         <div id="showEntities">
+          <br />
+          <Typography>Choose an Action:</Typography>
           <Button onClick={searchForEntities}> Wander</Button>
           <br />
           <br />
           {/* <Typography>{JSON.stringify(spawn)}</Typography> */}
+          <br />
+          <Typography>Current Entities:</Typography>
           {spawn.map((entity) => (
             <Button
               onClick={interactEntity}
@@ -130,6 +99,7 @@ const Main = () => {
           ))}
         </div>
       )}
+
       {user.current_state === "interacting" && <Interaction />}
     </div>
   );

@@ -74,29 +74,22 @@ Directory Structure:
 
 ## To-Do's
 
-[ ] Setup a log/narrator
-[ ] Setup HP/MP/Stamina System
-[ ] Also, spawn 2-5 entities if there are less than 0 entities
-[ ] Zones that players have access to needs to be programatically provided and mapped in World component
-That is, only zones that have been unlocked will have players be shown access to
-And in future, zones that could be accessed will be 'disabled', but will have helper text (sometimes)
-to show how they can be unlocked
-[ ] Inform on Button hover (for world/zone selection)
-https://stackoverflow.com/questions/61204955/material-ui-display-sub-element-on-hover-of-parent
-https://codesandbox.io/s/mui-theme-css-hover-example-n8ou5?file=/demo.js
-[ ] Update to configureStore method of the @reduxjs/toolkit package, which replaces createStore (https://redux.js.org/introduction/why-rtk-is-redux-today)
+    [ ] Setup a log/narrator
+    [ ] Setup HP/MP/Stamina System
+    [ ] Also, spawn 2-5 entities if there are less than 0 entities
+    [ ] Zones that players have access to needs to be programatically provided and mapped in World component
+    That is, only zones that have been unlocked will have players be shown access to
+    And in future, zones that could be accessed will be 'disabled', but will have helper text (sometimes)
+    to show how they can be unlocked
+    [ ] Programatically map buttons for interaction (more important when there are more possible actions later) - Could feed them to client via an array of actions
+    [ ] Inform on Button hover (for world/zone selection)
+    https://stackoverflow.com/questions/61204955/material-ui-display-sub-element-on-hover-of-parent
+    https://codesandbox.io/s/mui-theme-css-hover-example-n8ou5?file=/demo.js
+    [ ] Update to configureStore method of the @reduxjs/toolkit package, which replaces createStore (https://redux.js.org/introduction/why-rtk-is-redux-today)
 
 ## Bugs
 
-    [ ] User 'interacting' too quickly causes request problems
-    [ ] When two users are interacting with the same entity, and the entity no longer exists and
-        user who still has a 'cached' version of the entity who tries to interact with it,
-        will exhibit an error (the action button will disappear, abandon event button is still there, nothing else happens)
-                -Possible solution... If a player clicks this, and has no current spawn_id in their reducer, just set their state client-side
-
 ## Possible solutions
-
-    [ ] Prevent user from clicking again until request is complete
 
 ## Upcoming Features/Requests
 
