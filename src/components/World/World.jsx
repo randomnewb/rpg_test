@@ -12,7 +12,6 @@ const World = () => {
   // const zoneIdToName = ["None", "Forest", "Mountain"];
 
   const changeZone = (e) => {
-    console.log("what is zone", e.target.id, "true or not", e.target.id === "");
     if (e.target.id !== "") {
       dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: e.target.id });
       history.push(`/zone/`);
