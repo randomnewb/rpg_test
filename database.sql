@@ -80,10 +80,10 @@ INSERT INTO "zone_stat" ("zone_id", "stat_id", "rate")
 VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
 
 
-INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
-VALUES (1,'test', 1, 10, 1, 1, 1, 1)
-RETURNING id;
+-- INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
+-- VALUES (1,'test', 1, 10, 1, 1, 1, 1)
+-- RETURNING id;
 
-UPDATE "user"
-SET current_state='observing', stat_id='5'
-WHERE id=1;
+-- UPDATE "user"
+-- SET current_state='observing', stat_id='5'
+-- WHERE id=1;
