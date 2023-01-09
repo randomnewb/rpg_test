@@ -9,6 +9,35 @@ const userStrategy = require("../strategies/user.strategy");
 const router = express.Router();
 
 /**
+ * UPDATE current zone for user
+ */
+
+router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
+  const db = await pool.connect();
+
+  try {
+    await db.query("BEGIN");
+
+    const sql = `UPDATE "user"
+    SET "current_zone" = $1
+    WHERE "id" = $2
+    RETURNING current_zone;`;
+
+    const result = await db.query(sql, [req.params.id, req.user.id]);
+
+    await db.query("COMMIT");
+
+    res.status(201).send(result.rows[0]);
+  } catch (e) {
+    await db.query("ROLLBACK");
+    console.log("Error updating zone", e);
+    res.sendStatus(500);
+  } finally {
+    db.release();
+  }
+});
+
+/**
  * UPDATE state for user
  */
 
@@ -38,8 +67,6 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
   } else if (req.body.userState === "initialize") {
     const db = await pool.connect();
     try {
-      console.log("req.body.userState is", req.body.userState);
-
       await db.query("BEGIN");
       const sql_initializeCharacter = `
       INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
@@ -48,6 +75,10 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
       `;
 
       const initialize = await db.query(sql_initializeCharacter, [req.user.id]);
+
+      await db.query("COMMIT");
+
+      await db.query("BEGIN");
 
       const sql_tieUserStat = `
       UPDATE "user"
@@ -65,33 +96,6 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
     } finally {
       db.release();
     }
-  }
-});
-
-/**
- * UPDATE current zone for user
- */
-
-router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
-  const db = await pool.connect();
-
-  try {
-    await db.query("BEGIN");
-
-    const sql = `UPDATE "user"
-    SET "current_zone" = $1
-    WHERE "id" = $2;`;
-
-    await db.query(sql, [req.params.id, req.user.id]);
-    await db.query("COMMIT");
-
-    res.sendStatus(201);
-  } catch (e) {
-    await db.query("ROLLBACK");
-    console.log("Error updating zone", e);
-    res.sendStatus(500);
-  } finally {
-    db.release();
   }
 });
 

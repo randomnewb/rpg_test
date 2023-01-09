@@ -9,9 +9,7 @@ const World = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const zoneIdToName = ["None", "Forest", "Mountain"];
-
-  const user = useSelector((store) => store.user);
+  // const zoneIdToName = ["None", "Forest", "Mountain"];
 
   const setZone = (zone) => {
     dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: zone });

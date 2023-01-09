@@ -90,6 +90,9 @@ Directory Structure:
 
 ## Bugs
 
+    [ ] Sometimes the server will send a 403 for setting the current "zone" route for the user
+            -   Seems that the payload can occasionally be empty ('')
+
 ## Possible solutions
 
 ## Upcoming Features/Requests
