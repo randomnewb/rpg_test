@@ -23,6 +23,7 @@ import "./App.css";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 import defaultTheme from "./defaultTheme";
+import SetupCharacter from "../SetupCharacter/SetupCharacter";
 
 let theme = createTheme(defaultTheme);
 
@@ -51,16 +52,32 @@ function App() {
             If the user is not logged in, the ProtectedRoute will show the LoginPage (component).
             Even though it seems like they are different pages, the user is always on localhost:3000/user */}
 
+            <ProtectedRoute exact path="/intialize">
+              <SetupCharacter />
+            </ProtectedRoute>
+
             <ProtectedRoute exact path="/world">
-              <World />
+              {user.current_state === "initialize" ? (
+                <SetupCharacter />
+              ) : (
+                <World />
+              )}
             </ProtectedRoute>
 
             <ProtectedRoute exact path="/zone">
-              <Zone />
+              {user.current_state === "initialize" ? (
+                <SetupCharacter />
+              ) : (
+                <Zone />
+              )}
             </ProtectedRoute>
 
             <ProtectedRoute exact path="/inventory">
-              <Inventory />
+              {user.current_state === "initialize" ? (
+                <SetupCharacter />
+              ) : (
+                <Inventory />
+              )}
             </ProtectedRoute>
 
             <Route exact path="/login">

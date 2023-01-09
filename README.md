@@ -74,6 +74,7 @@ Directory Structure:
 
 ## To-Do's
 
+    [ ] Database has been changed, bit.io and other databases need to be updated accordingly
     [ ] Setup a log/narrator
     [ ] Setup HP/MP/Stamina System
     [ ] Also, spawn 2-5 entities if there are less than 0 entities

@@ -13,26 +13,58 @@ const router = express.Router();
  */
 
 router.put("/state", rejectUnauthenticated, async (req, res) => {
-  const db = await pool.connect();
+  if (req.body.userState !== "initialize") {
+    const db = await pool.connect();
 
-  try {
-    await db.query("BEGIN");
+    try {
+      await db.query("BEGIN");
 
-    const sql = `UPDATE "user"
-    SET current_state=$1,
-    spawn_id=$3
-    WHERE id=$2;`;
+      const sql = `UPDATE "user"
+        SET current_state=$1,
+        spawn_id=$3
+        WHERE id=$2;`;
 
-    await db.query(sql, [req.body.userState, req.user.id, req.body.entityId]);
-    await db.query("COMMIT");
+      await db.query(sql, [req.body.userState, req.user.id, req.body.entityId]);
+      await db.query("COMMIT");
 
-    res.sendStatus(201);
-  } catch (e) {
-    await db.query("ROLLBACK");
-    console.log("Error updating user state", e);
-    res.sendStatus(500);
-  } finally {
-    db.release();
+      res.sendStatus(201);
+    } catch (e) {
+      await db.query("ROLLBACK");
+      console.log("Error updating user state", e);
+      res.sendStatus(500);
+    } finally {
+      db.release();
+    }
+  } else if (req.body.userState === "initialize") {
+    const db = await pool.connect();
+    try {
+      console.log("req.body.userState is", req.body.userState);
+
+      await db.query("BEGIN");
+      const sql_initializeCharacter = `
+      INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
+      VALUES ($1,'test', 1, 10, 1, 1, 1, 1)
+      RETURNING id;
+      `;
+
+      const initialize = await db.query(sql_initializeCharacter, [req.user.id]);
+
+      const sql_tieUserStat = `
+      UPDATE "user"
+      SET current_state='observing', stat_id=$1
+      WHERE id=$2;
+      `;
+      await db.query(sql_tieUserStat, [initialize.rows[0].id, req.user.id]);
+
+      await db.query("COMMIT");
+      res.sendStatus(201);
+    } catch (e) {
+      await db.query("ROLLBACK");
+      console.log("Error updating user state", e);
+      res.sendStatus(500);
+    } finally {
+      db.release();
+    }
   }
 });
 

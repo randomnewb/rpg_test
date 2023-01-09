@@ -10,7 +10,7 @@ CREATE TABLE "user" (
     "username" VARCHAR (80) UNIQUE NOT NULL,
     "password" VARCHAR (1000) NOT NULL,
 	"current_zone" INT REFERENCES "zone" DEFAULT 1,
-	"current_state" VARCHAR (255) DEFAULT 'observing'
+	"current_state" VARCHAR (255) DEFAULT 'initialize'
 );
 
 
@@ -63,12 +63,13 @@ VALUES('Zombie', 'mob', 2, 5), ('Oak Tree', 'woodcutting', 2, 3), ('Boulder', 'm
 -- PostgresQL is struggling to create it when there's no reference
 
 ALTER TABLE "user"
-ADD "spawn_id" INT REFERENCES "spawn" ON DELETE SET NULL;
+ADD "spawn_id" INT REFERENCES "spawn" ON DELETE SET NULL,
+ADD	"stat_id" INT REFERENCES "stat" ON DELETE CASCADE;
 
 -- Sample Data
 
 INSERT INTO "spawn" ("stat_id", "zone_id", "current_health")
-VALUES (1, 1, 5), (1, 1, 3), (3, 1, 4);
+VALUES (1, 1, 5), (1, 1, 3), (2, 1, 4);
 
 INSERT INTO "spawn" ("stat_id","zone_id", "current_health")
 VALUES (1, 2, 4), (3, 2, 4), (3, 2, 5);
@@ -78,25 +79,11 @@ VALUES (1, 2, 4), (3, 2, 4), (3, 2, 5);
 INSERT INTO "zone_stat" ("zone_id", "stat_id", "rate")
 VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
 
--- Shows all spawned entities in a visited zone
 
--- SELECT spawn.id as spawn_id, spawn.current_health, stat.name, stat.type, zone.id as zone_id
--- FROM spawn, stat, zone
--- where
--- 	zone_id = 1
--- 	and spawn.stat_id = stat.id
--- 	AND spawn.zone_id = zone.id;
+INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
+VALUES (1,'test', 1, 10, 1, 1, 1, 1)
+RETURNING id;
 
-
--- SELECT zone_id, stat_id, rate
--- FROM zone_stat
--- where zone_id = 2;
-
-
--- select "name", "type", min_health, max_health
--- FROM stat
--- where id = 1;
-
--- INSERT INTO spawn
--- (stat_id, zone_id, current_health)
--- VALUES(1, 1, 3);
+UPDATE "user"
+SET current_state='observing', stat_id='5'
+WHERE id=1;

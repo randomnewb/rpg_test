@@ -74,6 +74,7 @@ const Main = () => {
     <div>
       <div>
         <Typography>Current Zone: {zoneIdToName[user.current_zone]}</Typography>
+        <Typography>{JSON.stringify(user)}</Typography>
       </div>
 
       {user.current_state === "observing" && (
