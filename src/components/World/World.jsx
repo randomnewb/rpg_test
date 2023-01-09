@@ -11,13 +11,14 @@ const World = () => {
 
   // const zoneIdToName = ["None", "Forest", "Mountain"];
 
-  const setZone = (zone) => {
-    dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: zone });
-  };
-
   const changeZone = (e) => {
-    setZone(e.target.id);
-    history.push(`/zone/`);
+    console.log("what is zone", e.target.id, "true or not", e.target.id === "");
+    if (e.target.id !== "") {
+      dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: e.target.id });
+      history.push(`/zone/`);
+    } else if (e.target.id === "") {
+      history.go(0);
+    }
   };
 
   return (
