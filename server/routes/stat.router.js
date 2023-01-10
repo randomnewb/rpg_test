@@ -8,7 +8,6 @@ const {
 // GET player's stats
 
 router.get("/", rejectUnauthenticated, async (req, res) => {
-  console.log(req.user.id);
   const db = await pool.connect();
 
   try {

@@ -26,7 +26,7 @@ const World = () => {
   return (
     <div>
       <div>
-        {/* <Typography> {JSON.stringify(user)}</Typography> */}
+        <Typography> {JSON.stringify(user)}</Typography>
         <Typography>Name: {stat.name}</Typography>
         <Typography>Level: {stat.level}</Typography>
         <Typography>Health: {stat.health}</Typography>
