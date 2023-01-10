@@ -61,4 +61,5 @@ function* fetchUserStat() {
     alert("Couldn't fetch user stats");
   }
 }
+
 export default userSaga;

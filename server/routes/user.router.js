@@ -70,11 +70,18 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
       await db.query("BEGIN");
       const sql_initializeCharacter = `
       INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
-      VALUES ($1,'test', 1, 10, 1, 1, 1, 1)
+      VALUES ($1, $2, 1, $3, $4, $5, $6, 1)
       RETURNING id;
       `;
 
-      const initialize = await db.query(sql_initializeCharacter, [req.user.id]);
+      const initialize = await db.query(sql_initializeCharacter, [
+        req.user.id,
+        req.body.name,
+        req.body.health,
+        req.body.strength,
+        req.body.dexterity,
+        req.body.wisdom,
+      ]);
 
       await db.query("COMMIT");
 

@@ -8,8 +8,6 @@ const userReducer = (state = {}, action) => {
       return { ...state, data: action.payload };
     case "SET_USER_STATE":
       return { ...state, data: action.payload };
-    case "SET_USER_STAT":
-      return { ...state, stat: action.payload };
     default:
       return state;
   }

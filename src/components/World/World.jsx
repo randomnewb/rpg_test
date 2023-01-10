@@ -1,6 +1,5 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
 import { ReactComponent as Forest } from "../../svg/forest.svg";
@@ -11,6 +10,7 @@ const World = () => {
   const history = useHistory();
 
   const user = useSelector((store) => store.user);
+  const stat = useSelector((store) => store.stat);
 
   // const zoneIdToName = ["None", "Forest", "Mountain"];
 
@@ -23,17 +23,14 @@ const World = () => {
     }
   };
 
-  // useEffect(() => {
-  //   dispatch({ type: "FETCH_USER_STAT" });
-  // }, []);
-
   return (
     <div>
       <div>
-        <Typography>Name: {user.stat.name}</Typography>
-        <Typography>Level: {user.stat.level}</Typography>
-        <Typography>Health: {user.stat.health}</Typography>
-        <Typography>Damage: {user.stat.damage}</Typography>
+        {/* <Typography> {JSON.stringify(user)}</Typography> */}
+        <Typography>Name: {stat.name}</Typography>
+        <Typography>Level: {stat.level}</Typography>
+        <Typography>Health: {stat.health}</Typography>
+        <Typography>Damage: {stat.damage}</Typography>
         <br />
         <Typography>
           {/* Zone is: {zoneIdToName[user.current_zone]} */}

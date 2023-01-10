@@ -20,6 +20,20 @@ const defaultTheme = {
     },
   },
   components: {
+    MuiOutlinedInput: {
+      defaultProps: {
+        style: {
+          color: "#FFFFFF",
+        },
+      },
+    },
+    MuiInputLabel: {
+      defaultProps: {
+        style: {
+          color: "#FFFFFF",
+        },
+      },
+    },
     MuiTypography: {
       defaultProps: {
         color: "#FFFFFF",
