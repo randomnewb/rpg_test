@@ -92,11 +92,14 @@ Directory Structure:
 
     [ ] Sometimes the server will send a 403 for setting the current "zone" route for the user
             -   Seems that the payload can occasionally be empty ('')
+            -   Current bug fix was to use history.go(0) to 'refresh' the page if the payload is empty after button press
 
 ## Possible solutions
 
 ## Upcoming Features/Requests
 
+    - Redo the Theme - 90's apocalyptic punk
+    - Implement dice/card system
     - A log/narrator - Keeps a record of what happens during an interaction
         i.e., "Boulder took 2 damage from you", "Zombie took a bite out of you for 1 damage"
     - Setup a stamina system - Interacting utilizes stamina, players will have to figure out how to balance this resource along with their health and
@@ -109,3 +112,18 @@ Directory Structure:
     - Add more content to the few existing systems (more types of entities, zones, etc.)
     - Add a player profile (choose from some set avatars as your display image, add a bit about yourself)
     - Add a way to see other players who are online or visit other player's profiles and see their stats
+
+## Working on
+
+    [x] Player now has stats_id tied to their user.id
+    [ ] Show the player's health to them (on Zone and during Interaction)
+    [ ] Show the player's stats to them (on a Character Component)
+
+    [ ] Integrate player taking damage from enemies
+    [ ] Player's health changes when taking damage from enemies
+    [ ] When player's health is equal to or below 0, reset them back to the Zone view
+
+    -   Potential Issues/Solutions
+    -   How do we ensure that the player information is updated in line with the entity data?
+    -   Making sure that there is a screen of information shown when the player completes an encounter or has failed an encounter
+    -   Integrate player state ('success', 'failed', 'exhausted', etc.)

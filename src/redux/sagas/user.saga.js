@@ -5,6 +5,7 @@ function* userSaga() {
   yield takeLatest("FETCH_USER", fetchUser);
   yield takeLatest("UPDATE_CURRENT_USER_ZONE", updateCurrentUserZone);
   yield takeLatest("UPDATE_USER_STATE", updateUserState);
+  yield takeLatest("FETCH_USER_STAT", fetchUserStat);
 }
 // worker Saga: will be fired on "FETCH_USER" actions
 function* fetchUser() {
@@ -51,4 +52,13 @@ function* updateUserState(action) {
   }
 }
 
+function* fetchUserStat() {
+  try {
+    const userStat = yield axios.get("/api/stat");
+    yield put({ type: "SET_USER_STAT", payload: userStat.data });
+  } catch (e) {
+    console.log("Failed to fetch user stats", e);
+    alert("Couldn't fetch user stats");
+  }
+}
 export default userSaga;

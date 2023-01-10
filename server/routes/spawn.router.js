@@ -25,7 +25,7 @@ router.get("/zone/:id", rejectUnauthenticated, async (req, res) => {
 
     result = await db.query(sql, [req.params.id]);
 
-    res.send(result.rows);
+    res.status(200).send(result.rows);
   } catch (err) {
     console.error(err);
     sendStatus(500);
