@@ -18,12 +18,11 @@ import RegisterPage from "../RegisterPage/RegisterPage";
 import World from "../World/World";
 import Inventory from "../Inventory/Inventory";
 import Zone from "../Zone/Zone";
+import SetupCharacter from "../SetupCharacter/SetupCharacter";
 
 import "./App.css";
-
 import { createTheme, ThemeProvider } from "@mui/material";
 import defaultTheme from "./defaultTheme";
-import SetupCharacter from "../SetupCharacter/SetupCharacter";
 
 let theme = createTheme(defaultTheme);
 
@@ -34,7 +33,6 @@ function App() {
 
   useEffect(() => {
     dispatch({ type: "FETCH_USER" });
-    dispatch({ type: "FETCH_USER_STAT" });
   }, [dispatch]);
 
   return (

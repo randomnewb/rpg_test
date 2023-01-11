@@ -19,16 +19,12 @@ function Nav() {
         )}
 
         {/* If a user is logged in, show these links */}
-        {user.id && (
+        {user.id && user.current_state !== "initialize" && (
           <>
             <Link className="navLink" to="/world">
               World
             </Link>
-            {/* <Link
-                            className="navLink"
-                            to="/main">
-                            Main
-                        </Link> */}
+
             <Link className="navLink" to="/inventory">
               Inventory
             </Link>

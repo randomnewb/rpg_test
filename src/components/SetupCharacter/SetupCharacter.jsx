@@ -1,16 +1,18 @@
 import React from "react";
 import { useState } from "react";
 import { Typography, Button, TextField } from "@mui/material";
+import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 const SetupCharacter = () => {
+  const history = useHistory();
   const [characterName, setCharacterName] = useState("");
 
   const dispatch = useDispatch();
 
   const completeSetup = () => {
     dispatch({
-      type: "UPDATE_USER_STATE",
+      type: "INITIALIZE_USER",
       payload: {
         userState: "initialize",
         name: characterName,
@@ -20,7 +22,8 @@ const SetupCharacter = () => {
         wisdom: 10,
       },
     });
-    dispatch({ type: "FETCH_USER_STAT" });
+
+    history.go(0);
   };
 
   return (

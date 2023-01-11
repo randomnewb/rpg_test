@@ -1,13 +1,3 @@
-/*
-
-- [DONE] Entities data needs to come from the database/server
-- Entitites need to be created on the server side and fed to the client
-- Currently spawned entities need to come from the server and be updated back and forth between the client and the server
-- playerState needs to come from the server
-- [DONE] Zone needs to come from the server
-
-*/
-
 import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,13 +10,13 @@ const Main = () => {
   const zoneIdToName = ["None", "Forest", "Mountain"];
 
   // Psuedo-loading so that there is no flashing when components re-render/grabbed from the server
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
+
+  // let loadTime = randomNumRange(550, 700);
 
   const randomNumRange = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
-
-  let loadTime = randomNumRange(550, 700);
 
   const interactEntity = (e) => {
     dispatch({
@@ -53,7 +43,6 @@ const Main = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), loadTime);
     dispatch({ type: "FETCH_SPAWN_BY_ZONE", payload: user.current_zone });
   }, []);
 
@@ -62,13 +51,13 @@ const Main = () => {
   //   spawnRandomEntities(2, 5);
   // }, []);
 
-  if (loading) {
-    return (
-      <div>
-        <Typography>Loading...</Typography>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div>
+  //       <Typography>Loading...</Typography>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>

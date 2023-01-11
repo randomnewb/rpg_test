@@ -42,67 +42,73 @@ router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
  */
 
 router.put("/state", rejectUnauthenticated, async (req, res) => {
-  if (req.body.userState !== "initialize") {
-    const db = await pool.connect();
+  const db = await pool.connect();
 
-    try {
-      await db.query("BEGIN");
+  try {
+    await db.query("BEGIN");
 
-      const sql = `UPDATE "user"
+    const sql = `UPDATE "user"
         SET current_state=$1,
         spawn_id=$3
         WHERE id=$2;`;
 
-      await db.query(sql, [req.body.userState, req.user.id, req.body.entityId]);
-      await db.query("COMMIT");
+    await db.query(sql, [req.body.userState, req.user.id, req.body.entityId]);
+    await db.query("COMMIT");
 
-      res.sendStatus(201);
-    } catch (e) {
-      await db.query("ROLLBACK");
-      console.log("Error updating user state", e);
-      res.sendStatus(500);
-    } finally {
-      db.release();
-    }
-  } else if (req.body.userState === "initialize") {
-    const db = await pool.connect();
-    try {
-      await db.query("BEGIN");
-      const sql_initializeCharacter = `
-      INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
-      VALUES ($1, $2, 1, $3, $4, $5, $6, 1)
-      RETURNING id;
-      `;
+    res.sendStatus(201);
+  } catch (e) {
+    await db.query("ROLLBACK");
+    console.log("Error updating user state", e);
+    res.sendStatus(500);
+  } finally {
+    db.release();
+  }
+});
 
-      const initialize = await db.query(sql_initializeCharacter, [
-        req.user.id,
-        req.body.name,
-        req.body.health,
-        req.body.strength,
-        req.body.dexterity,
-        req.body.wisdom,
-      ]);
+/*
+ * UPDATE / Initialize the user
+ */
 
-      await db.query("COMMIT");
+router.put("/initialize", rejectUnauthenticated, async (req, res) => {
+  const db = await pool.connect();
 
-      await db.query("BEGIN");
+  try {
+    await db.query("BEGIN");
 
-      const sql_tieUserStat = `
-      UPDATE "user"
-      SET current_state='observing', stat_id=$1
-      WHERE id=$2;
-      `;
-      await db.query(sql_tieUserStat, [initialize.rows[0].id, req.user.id]);
+    const sql_initializeCharacter = `
+    INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
+    VALUES ($1, $2, 1, $3, $4, $5, $6, 1)
+    RETURNING id;
+    `;
 
-      await db.query("COMMIT");
-      res.sendStatus(201);
-    } catch (e) {
-      await db.query("ROLLBACK");
-      console.log("Error updating user state", e);
-      res.sendStatus(500);
-    } finally {
-      db.release();
-    }
+    const initialize = await db.query(sql_initializeCharacter, [
+      req.user.id,
+      req.body.name,
+      req.body.health,
+      req.body.strength,
+      req.body.dexterity,
+      req.body.wisdom,
+    ]);
+
+    await db.query("COMMIT");
+
+    const sql_tieUserStat = `
+    UPDATE "user"
+    SET current_state='observing', stat_id=$1
+    WHERE id=$2;
+    `;
+
+    await db.query(sql_tieUserStat, [initialize.rows[0].id, req.user.id]);
+
+    await db.query("COMMIT");
+
+    res.sendStatus(201);
+  } catch (e) {
+    await db.query("ROLLBACK");
+    console.log("Error initializing the user", e);
+    res.sendStatus(500);
+  } finally {
+    db.release();
   }
 });
 

@@ -8,30 +8,25 @@ const {
 /**
  * FETCH current entities in a zone
  */
-router.get("/zone/:id", rejectUnauthenticated, async (req, res) => {
-  const db = await pool.connect();
-
-  try {
-    await db.query("BEGIN");
-
-    const sql = `
-    SELECT spawn.id as spawn_id, spawn.current_health, stat.name, stat.type, zone.id as zone_id
-    FROM spawn, stat, zone
-    WHERE
+router.get("/zone/:id", rejectUnauthenticated, (req, res) => {
+  const sql = `
+      SELECT spawn.id as spawn_id, spawn.current_health, stat.name, stat.type, zone.id as zone_id
+      FROM spawn, stat, zone
+      WHERE
       zone_id = $1
       and spawn.stat_id = stat.id
       AND spawn.zone_id = zone.id;
-  `;
+      `;
 
-    result = await db.query(sql, [req.params.id]);
-
-    res.status(200).send(result.rows);
-  } catch (err) {
-    console.error(err);
-    sendStatus(500);
-  } finally {
-    db.release();
-  }
+  pool
+    .query(sql, [req.params.id])
+    .then((result) => {
+      res.status(200).send(result.rows);
+    })
+    .catch((e) => {
+      console.log("Error getting spawn by zone id", e);
+      res.sendStatus(500);
+    });
 });
 
 /**

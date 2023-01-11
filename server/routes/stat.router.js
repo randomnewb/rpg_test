@@ -7,13 +7,8 @@ const {
 
 // GET player's stats
 
-router.get("/", rejectUnauthenticated, async (req, res) => {
-  const db = await pool.connect();
-
-  try {
-    await db.query("BEGIN");
-
-    const sql = `
+router.get("/", rejectUnauthenticated, (req, res) => {
+  const sql = `
         SELECT stat.name, stat.LEVEL, stat.experience, stat.health, stat.strength, stat.dexterity, stat.wisdom, stat.damage, stat.armor
         FROM "stat", "user"
         WHERE 
@@ -21,15 +16,15 @@ router.get("/", rejectUnauthenticated, async (req, res) => {
         AND "stat".user_id = $1;
         `;
 
-    result = await db.query(sql, [req.user.id]);
-
-    res.status(200).send(result.rows[0]);
-  } catch (err) {
-    console.log(err);
-    sendStatus(500);
-  } finally {
-    db.release();
-  }
+  pool
+    .query(sql, [req.user.id])
+    .then((result) => {
+      res.status(200).send(result.rows[0]);
+    })
+    .catch((e) => {
+      console.log("Error getting player's stats", e);
+      console.log(500);
+    });
 });
 
 module.exports = router;

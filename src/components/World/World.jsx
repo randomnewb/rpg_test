@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
@@ -14,10 +14,14 @@ const World = () => {
 
   // const zoneIdToName = ["None", "Forest", "Mountain"];
 
+  // useEffect(() => {
+  //   dispatch({ type: "FETCH_USER_STAT" });
+  // }, []);
+
   const changeZone = (e) => {
     if (e.target.id !== "") {
       dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: e.target.id });
-      history.push(`/zone/`);
+      history.push("/zone");
     } else if (e.target.id === "") {
       history.go(0);
     }
@@ -25,18 +29,16 @@ const World = () => {
 
   return (
     <div>
-      <div>
-        <Typography> {JSON.stringify(user)}</Typography>
-        <Typography>Name: {stat.name}</Typography>
+      {/* <Typography> {JSON.stringify(user)}</Typography> */}
+      {/* <Typography>Name: {stat.name}</Typography>
         <Typography>Level: {stat.level}</Typography>
         <Typography>Health: {stat.health}</Typography>
-        <Typography>Damage: {stat.damage}</Typography>
-        <br />
-        <Typography>
-          {/* Zone is: {zoneIdToName[user.current_zone]} */}
-          Choose a Zone to travel to:
-        </Typography>
-      </div>
+        <Typography>Damage: {stat.damage}</Typography> */}
+      <br />
+      <Typography>
+        {/* Zone is: {zoneIdToName[user.current_zone]} */}
+        Choose a Zone to travel to:
+      </Typography>
 
       <div>
         <Button id="1" onClick={changeZone}>

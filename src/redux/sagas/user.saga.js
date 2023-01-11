@@ -1,11 +1,12 @@
 import axios from "axios";
-import { put, takeLatest } from "redux-saga/effects";
+import { put, takeEvery, takeLatest } from "redux-saga/effects";
 
 function* userSaga() {
   yield takeLatest("FETCH_USER", fetchUser);
   yield takeLatest("UPDATE_CURRENT_USER_ZONE", updateCurrentUserZone);
   yield takeLatest("UPDATE_USER_STATE", updateUserState);
   yield takeLatest("FETCH_USER_STAT", fetchUserStat);
+  yield takeLatest("INITIALIZE_USER", initializeUser);
 }
 // worker Saga: will be fired on "FETCH_USER" actions
 function* fetchUser() {
@@ -35,6 +36,7 @@ function* updateCurrentUserZone(action) {
     const userZone = yield axios.put(`/api/user/zone/${action.payload}`);
     yield put({ type: "SET_USER_ZONE", payload: userZone.data });
     yield put({ type: "FETCH_USER" });
+    yield put({ type: "FETCH_SPAWN_BY_ZONE", payload: action.payload });
   } catch (e) {
     console.log("Failed to set current zone", e);
     alert("Couldn't update current zone");
@@ -59,6 +61,20 @@ function* fetchUserStat() {
   } catch (e) {
     console.log("Failed to fetch user stats", e);
     alert("Couldn't fetch user stats");
+  }
+}
+
+function* initializeUser(action) {
+  try {
+    yield axios.put("/api/user/initialize", action.payload);
+    yield put({
+      type: "SET_USER_STAT",
+      payload: { current_state: "observing" },
+    });
+    yield put({ type: "FETCH_USER_STAT" });
+  } catch (e) {
+    console.log("Failed to initialize user", e);
+    alert("Couldn't finish initializing user");
   }
 }
 
