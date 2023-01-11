@@ -12,7 +12,7 @@ const World = () => {
   const user = useSelector((store) => store.user);
   const stat = useSelector((store) => store.stat);
 
-  // const zoneIdToName = ["None", "Forest", "Mountain"];
+  const zoneIdToName = ["None", "Forest", "Mountain"];
 
   useEffect(() => {
     dispatch({ type: "FETCH_USER_STAT" });
@@ -28,16 +28,14 @@ const World = () => {
 
   return (
     <div>
-      <Typography> {JSON.stringify(user)}</Typography>
+      {/* <Typography> {JSON.stringify(user)}</Typography>
       <Typography>Name: {stat.name}</Typography>
       <Typography>Level: {stat.level}</Typography>
       <Typography>Health: {stat.health}</Typography>
-      <Typography>Damage: {stat.damage}</Typography>
+      <Typography>Damage: {stat.damage}</Typography> */}
+      <Typography>Currently in: {zoneIdToName[user.current_zone]}</Typography>
       <br />
-      <Typography>
-        {/* Zone is: {zoneIdToName[user.current_zone]} */}
-        Choose a Zone to travel to:
-      </Typography>
+      <Typography>Choose a Zone to travel to:</Typography>
 
       <div>
         <Button id="1" onClick={changeZone}>
