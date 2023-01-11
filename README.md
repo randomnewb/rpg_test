@@ -90,12 +90,6 @@ Directory Structure:
 
 ## Bugs
 
-    [ ] Sometimes the server will send a 403 for setting the current "zone" route for the user
-            -   Seems that the payload can occasionally be empty ('')
-            -   Current bug fix was to use history.go(0) to 'refresh' the page if the payload is empty after button press
-            -   This bug has gotten worse after implementing player stats
-            -   Possible that async/await is causing issues - fix up async await code OR try simple sends
-
 ## Possible solutions
 
 ## Upcoming Features/Requests

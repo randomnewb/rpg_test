@@ -14,26 +14,25 @@ const World = () => {
 
   // const zoneIdToName = ["None", "Forest", "Mountain"];
 
-  // useEffect(() => {
-  //   dispatch({ type: "FETCH_USER_STAT" });
-  // }, []);
+  useEffect(() => {
+    dispatch({ type: "FETCH_USER_STAT" });
+  }, []);
 
   const changeZone = (e) => {
-    if (e.target.id !== "") {
-      dispatch({ type: "UPDATE_CURRENT_USER_ZONE", payload: e.target.id });
-      history.push("/zone");
-    } else if (e.target.id === "") {
-      history.go(0);
-    }
+    dispatch({
+      type: "UPDATE_CURRENT_USER_ZONE",
+      payload: e.currentTarget.id,
+    });
+    history.push("/zone");
   };
 
   return (
     <div>
-      {/* <Typography> {JSON.stringify(user)}</Typography> */}
-      {/* <Typography>Name: {stat.name}</Typography>
-        <Typography>Level: {stat.level}</Typography>
-        <Typography>Health: {stat.health}</Typography>
-        <Typography>Damage: {stat.damage}</Typography> */}
+      <Typography> {JSON.stringify(user)}</Typography>
+      <Typography>Name: {stat.name}</Typography>
+      <Typography>Level: {stat.level}</Typography>
+      <Typography>Health: {stat.health}</Typography>
+      <Typography>Damage: {stat.damage}</Typography>
       <br />
       <Typography>
         {/* Zone is: {zoneIdToName[user.current_zone]} */}
@@ -42,11 +41,13 @@ const World = () => {
 
       <div>
         <Button id="1" onClick={changeZone}>
-          Forest <Forest />
+          Forest
+          <Forest />
         </Button>
         <br />
         <Button id="2" onClick={changeZone}>
-          Mountain <Mountain />
+          Mountain
+          <Mountain />
         </Button>
       </div>
     </div>
