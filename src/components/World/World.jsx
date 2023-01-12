@@ -28,11 +28,12 @@ const World = () => {
 
   return (
     <div>
-      {/* <Typography> {JSON.stringify(user)}</Typography>
+      {/* <Typography> {JSON.stringify(user)}</Typography> */}
       <Typography>Name: {stat.name}</Typography>
       <Typography>Level: {stat.level}</Typography>
       <Typography>Health: {stat.health}</Typography>
-      <Typography>Damage: {stat.damage}</Typography> */}
+      <Typography>Damage: {stat.damage}</Typography>
+      <br />
       <Typography>Currently in: {zoneIdToName[user.current_zone]}</Typography>
       <br />
       <Typography>Choose a Zone to travel to:</Typography>

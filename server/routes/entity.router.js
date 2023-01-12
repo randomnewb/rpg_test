@@ -38,13 +38,13 @@ router.get("/:id", rejectUnauthenticated, async (req, res) => {
  * INTERACT with specific entity by its id
  */
 router.put("/:id", async (req, res) => {
-  // Get the entity by its id
-  // Subtract the entity's current_health by 1
-  // Return the entity
-
   const db = await pool.connect();
 
+  // Check to see if the entity exists
+
   const entityExists = await checkEntityExists(req.params.id, db);
+
+  // If entity no longer exists, set the player's state back to observing
 
   if (entityExists === undefined) {
     try {
@@ -64,15 +64,25 @@ router.put("/:id", async (req, res) => {
     } finally {
       db.release();
     }
+    // Or else perform the damage calculation
   } else if (req.params.id > 0) {
     try {
+      const healthOfPlayer = await checkHealthOfPlayer(req.user.id, db);
+
+      // console.log("health of player inside main route", healthOfPlayer);
+
+      // Get the health of the entity
       const healthOfEntity = await checkHealthOfEntity(req.params.id, db);
+
+      // Perform the damage calculation
       const damageCalculation = await performDamageCalculation(
         req.params.id,
         healthOfEntity,
         db
       );
 
+      // If after the damage calculation, the entity has no more health
+      // then send back info to update the user state to observing
       if (damageCalculation <= 0) {
         const sql_setUserState = `
       UPDATE "user" 
@@ -86,6 +96,7 @@ router.put("/:id", async (req, res) => {
         res.status(201).send(resetState);
       }
 
+      // Or else send back the current health of the entity
       if (damageCalculation.current_health >= 1) {
         res.status(201).send(damageCalculation);
       }
@@ -193,6 +204,29 @@ const performDamageCalculation = async (entityId, entityHealth, db) => {
       console.log(e);
       res.sendStatus(500);
     }
+  }
+};
+
+const checkHealthOfPlayer = async (playerId, db) => {
+  // Get health of player
+
+  try {
+    const sql_checkHealthOfPlayer = `
+    SELECT stat.name, stat.LEVEL, stat.experience, stat.health, stat.strength, stat.dexterity, stat.wisdom, stat.damage, stat.armor
+    FROM "stat", "user"
+    WHERE 
+    "user".id = $1
+    AND "stat".user_id = $1; 
+    `;
+
+    const checkHealthOfPlayer = await db.query(sql_checkHealthOfPlayer, [
+      playerId,
+    ]);
+
+    return checkHealthOfPlayer.rows[0].health;
+  } catch (e) {
+    console.log("Couldn't get player's health", e);
+    res.sendStatus(500);
   }
 };
 

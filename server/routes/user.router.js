@@ -1,3 +1,4 @@
+const { red } = require("@mui/material/colors");
 const express = require("express");
 const {
   rejectUnauthenticated,
@@ -44,26 +45,61 @@ router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
 router.put("/state", rejectUnauthenticated, async (req, res) => {
   const db = await pool.connect();
 
-  try {
-    await db.query("BEGIN");
+  const entityExists = await entityCheck(req.body.entityId, db);
 
-    const sql = `UPDATE "user"
+  if (entityExists > 0) {
+    try {
+      await db.query("BEGIN");
+
+      const sql = `UPDATE "user"
         SET current_state=$1,
         spawn_id=$3
         WHERE id=$2;`;
 
-    await db.query(sql, [req.body.userState, req.user.id, req.body.entityId]);
-    await db.query("COMMIT");
+      await db.query(sql, [req.body.userState, req.user.id, req.body.entityId]);
+      await db.query("COMMIT");
 
-    res.sendStatus(201);
-  } catch (e) {
-    await db.query("ROLLBACK");
-    console.log("Error updating user state", e);
-    res.sendStatus(500);
-  } finally {
-    db.release();
+      res.sendStatus(201);
+    } catch (e) {
+      await db.query("ROLLBACK");
+      console.log("Error updating user state", e);
+      res.sendStatus(500);
+    } finally {
+      db.release();
+    }
+  } else if (entityExists === undefined) {
+    try {
+      let result = undefined;
+
+      res.status(201).send(result);
+    } catch (e) {
+      console.log("Error retrieving entity", e);
+      res.sendStatus(500);
+    }
   }
 });
+
+// Perform a check to see if the entity still exists
+
+const entityCheck = async (entityId, db) => {
+  console.log("Checking entity", entityId);
+
+  if (entityId) {
+    try {
+      const sql_entityCheck = `
+      SELECT id
+      FROM spawn
+      WHERE id=$1;
+      `;
+
+      const entityCheck = await db.query(sql_entityCheck, [entityId]);
+
+      return entityCheck.rows[0].id;
+    } catch (e) {
+      console.log("Could not retrieve entity from database", e);
+    }
+  }
+};
 
 /*
  * UPDATE / Initialize the user

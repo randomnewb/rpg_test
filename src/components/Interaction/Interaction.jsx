@@ -6,6 +6,7 @@ const Interaction = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((store) => store.user);
+  const stat = useSelector((store) => store.stat);
   const entity = useSelector((store) => store.entity);
 
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -20,6 +21,7 @@ const Interaction = () => {
   const performAction = (e) => {
     disableButton();
     dispatch({ type: "INTERACT_WITH_ENTITY", payload: user.spawn_id });
+    // dispatch({ type: "INTERACT_WITH_USER", payload: user.spawn_id });
   };
 
   const abandonEvent = () => {
@@ -33,10 +35,15 @@ const Interaction = () => {
 
   useEffect(() => {
     dispatch({ type: "FETCH_ENTITY_DETAIL", payload: user.spawn_id });
+    dispatch({ type: "FETCH_USER_STAT" });
   }, []);
 
   return (
     <div>
+      <br />
+      <Typography>Player Name: {stat.name}</Typography>
+      <Typography>Health: {stat.health}</Typography>
+      <br />
       <Typography>Name: {entity.name}</Typography>
       <Typography>Health: {entity.current_health}</Typography>
       <br />

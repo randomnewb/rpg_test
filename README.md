@@ -116,8 +116,15 @@ Directory Structure:
     [x] Show the player's stats to them (on a Character Component)
 
     [ ] Integrate player taking damage from enemies
+        -   Set this up on the user router?
+        -   Going to try and set this up on the entity router as well
     [ ] Player's health changes when taking damage from enemies
+        -   This information will be updated as usual when the player info is fetched
+    [ ] Need to update database tables (player max_health and max_stamina)
     [ ] When player's health is equal to or below 0, reset them back to the Zone view
+        -   Make a separate component/view showing that the player lost their health
+        -   Bonus would be adding the information of the entity to this view
+        -   Button to reset the player's health, stamina back to part of their max_health/max_stamina
 
     -   Potential Issues/Solutions
     -   How do we ensure that the player information is updated in line with the entity data?
