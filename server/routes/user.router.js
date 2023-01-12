@@ -43,8 +43,6 @@ router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
  */
 
 router.put("/state", rejectUnauthenticated, async (req, res) => {
-  console.log(req.body);
-
   const db = await pool.connect();
 
   if (req.body.userState === "abandon") {
