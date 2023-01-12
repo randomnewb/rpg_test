@@ -36,11 +36,18 @@ router.get("/:id", rejectUnauthenticated, async (req, res) => {
 
 /**
  * INTERACT with specific entity by its id
+ *
+ * TO DO: Rewrite this with switch methods
  */
 router.put("/:id", async (req, res) => {
     const db = await pool.connect();
 
-    // Check to see if the entity exists
+    /**
+     *  Check to see if the entity exists
+     *  This check needs to happen first before anything to avoid problems with updates
+     *  or 'multiplayer', where someone else has already defeated an entity
+     *  that a user wants to interact with
+     */
 
     const entityExists = await checkEntityExists(req.params.id, db);
 
@@ -49,11 +56,11 @@ router.put("/:id", async (req, res) => {
     if (entityExists === undefined) {
         try {
             const sql_setUserState = `
-      UPDATE "user" 
-      SET current_state='observing'
-      WHERE id=$1
-      RETURNING current_state;
-      `;
+            UPDATE "user" 
+            SET current_state='observing'
+            WHERE id=$1
+            RETURNING current_state;
+            `;
 
             const result = await db.query(sql_setUserState, [req.user.id]);
 
@@ -65,11 +72,12 @@ router.put("/:id", async (req, res) => {
             db.release();
         }
         // Or else perform the damage calculation
-    } else if (req.params.id > 0) {
+    }
+    // If there is an entity (the id of the entity is not undefined basically)
+    else if (req.params.id > 0) {
         try {
+            // First, check if the player would be defeated
             const healthOfPlayer = await checkHealthOfPlayer(req.user.id, db);
-
-            // console.log("health of player inside main route", healthOfPlayer);
 
             const playerHurtCalculation = await performPlayerHurtCalculation(
                 req.user.id,
@@ -77,34 +85,44 @@ router.put("/:id", async (req, res) => {
                 db
             );
 
-            // Get the health of the entity
-            const healthOfEntity = await checkHealthOfEntity(req.params.id, db);
-
-            // Perform the damage calculation
-            const damageCalculation = await performDamageCalculation(
-                req.params.id,
-                healthOfEntity,
-                db
-            );
-
-            // If after the damage calculation, the entity has no more health
-            // then send back info to update the user state to observing
-            if (damageCalculation <= 0) {
-                const sql_setUserState = `
-      UPDATE "user" 
-      SET current_state='observing'
-      WHERE id=$1;
-      `;
-
-                await db.query(sql_setUserState, [req.user.id]);
-
-                let resetState = { current_state: "observing" };
-                res.status(201).send(resetState);
+            if (playerHurtCalculation.current_state === "defeated") {
+                let result = { current_state: "defeated" };
+                res.status(200).send(result);
             }
 
-            // Or else send back the current health of the entity
-            if (damageCalculation.current_health >= 1) {
-                res.status(201).send(damageCalculation);
+            if (playerHurtCalculation.current_state !== "defeated") {
+                // Get the health of the entity
+                const healthOfEntity = await checkHealthOfEntity(
+                    req.params.id,
+                    db
+                );
+
+                // Perform the damage calculation
+                const damageCalculation = await performDamageCalculation(
+                    req.params.id,
+                    healthOfEntity,
+                    db
+                );
+
+                // If after the damage calculation, the entity has no more health
+                // then send back info to update the user state to observing
+                if (damageCalculation <= 0) {
+                    const sql_setUserState = `
+                UPDATE "user" 
+                SET current_state='observing'
+                WHERE id=$1;
+                `;
+
+                    await db.query(sql_setUserState, [req.user.id]);
+
+                    let resetState = { current_state: "observing" };
+                    res.status(201).send(resetState);
+                }
+
+                // Or else send back the current health of the entity
+                if (damageCalculation.current_health >= 1) {
+                    res.status(201).send(damageCalculation);
+                }
             }
         } catch (err) {
             await db.query("ROLLBACK");
@@ -132,7 +150,6 @@ const checkEntityExists = async (entityId, db) => {
         return constCheckEntityExists.rows[0];
     } catch (err) {
         console.error(err);
-        res.sendStatus(500);
     }
 };
 
@@ -234,10 +251,14 @@ const checkHealthOfPlayer = async (playerId, db) => {
 };
 
 const performPlayerHurtCalculation = async (playerId, playerHealth, db) => {
-    // For now, just subtract 1 health from entity
-    // If the entity's health is equal to or less than 0
-    // Remove the entity
-    // Or else just send the entity with updated health
+    /**
+     * For now, just subtract 1 health from player
+     *
+     * If the player's health is equal to or less than 0
+     * We set their state to defeated
+     *
+     * Or else, just update their health in the database and return this
+     */
 
     playerHealth = playerHealth - 1;
 
@@ -248,7 +269,10 @@ const performPlayerHurtCalculation = async (playerId, playerHealth, db) => {
             // Set the player's state to "defeated"
 
             const sql_userDefeated = `
-            
+            UPDATE "user" 
+            SET current_state='defeated'
+            WHERE id=$1
+            RETURNING current_state;
             `;
 
             await db.query(sql_userDefeated, [playerId]);
@@ -268,10 +292,10 @@ const performPlayerHurtCalculation = async (playerId, playerHealth, db) => {
 
             // Update the player's health
             const sql_updatePlayerHealth = `
-            // UPDATE spawn
-            // SET current_health=$2
-            // WHERE id=$1
-            // RETURNING *;
+            UPDATE "stat"
+            SET health = $2
+            WHERE "stat".user_id = $1
+            RETURNING health;
             `;
 
             const updatedPlayerHealth = await db.query(sql_updatePlayerHealth, [
