@@ -21,13 +21,12 @@ const Interaction = () => {
   const performAction = (e) => {
     disableButton();
     dispatch({ type: "INTERACT_WITH_ENTITY", payload: user.spawn_id });
-    // dispatch({ type: "INTERACT_WITH_USER", payload: user.spawn_id });
   };
 
   const abandonEvent = () => {
     dispatch({
       type: "UPDATE_USER_STATE",
-      payload: { userState: "observing" },
+      payload: { userState: "abandon" },
     });
 
     dispatch({ type: "FETCH_SPAWN_BY_ZONE", payload: user.current_zone });

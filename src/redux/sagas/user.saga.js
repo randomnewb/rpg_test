@@ -45,14 +45,9 @@ function* updateCurrentUserZone(action) {
 
 function* updateUserState(action) {
   try {
-    if (action.payload === "observing" || undefined) {
-      yield put({ type: "SET_USER_STATE", payload: userState.data });
-      yield put({ type: "FETCH_USER" });
-    } else {
-      const userState = yield axios.put("/api/user/state", action.payload);
-      yield put({ type: "SET_USER_STATE", payload: userState.data });
-      yield put({ type: "FETCH_USER" });
-    }
+    const userState = yield axios.put("/api/user/state", action.payload);
+    yield put({ type: "SET_USER_STATE", payload: userState.data });
+    yield put({ type: "FETCH_USER" });
   } catch (e) {
     console.log("Failed to update user state", e);
     alert("Couldn't update user state");

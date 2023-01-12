@@ -90,6 +90,11 @@ Directory Structure:
 
 ## Bugs
 
+    [ ] "Not really a bug" - Querying the database for an entry that doesn't exist
+    throws an error in express and from the database
+        - Is there a way to query for entries or check if an entry 'does not exist'
+        and therefore return a non-error message with an empty result?
+
 ## Possible solutions
 
 ## Upcoming Features/Requests

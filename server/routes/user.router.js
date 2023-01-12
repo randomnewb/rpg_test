@@ -43,11 +43,11 @@ router.put("/zone/:id", rejectUnauthenticated, async (req, res) => {
  */
 
 router.put("/state", rejectUnauthenticated, async (req, res) => {
+  console.log(req.body);
+
   const db = await pool.connect();
 
-  const entityExists = await entityCheck(req.body.entityId, db);
-
-  if (entityExists > 0) {
+  if (req.body.userState === "abandon") {
     try {
       await db.query("BEGIN");
 
@@ -56,25 +56,53 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
         spawn_id=$3
         WHERE id=$2;`;
 
-      await db.query(sql, [req.body.userState, req.user.id, req.body.entityId]);
+      await db.query(sql, ["observing", req.user.id, null]);
       await db.query("COMMIT");
 
       res.sendStatus(201);
     } catch (e) {
       await db.query("ROLLBACK");
-      console.log("Error updating user state", e);
+      console.log("Error abandoning event", e);
       res.sendStatus(500);
     } finally {
       db.release();
     }
-  } else if (entityExists === undefined) {
-    try {
-      let result = undefined;
+  } else {
+    const entityExists = await entityCheck(req.body.entityId, db);
 
-      res.status(201).send(result);
-    } catch (e) {
-      console.log("Error retrieving entity", e);
-      res.sendStatus(500);
+    if (entityExists > 0) {
+      try {
+        await db.query("BEGIN");
+
+        const sql = `UPDATE "user"
+        SET current_state=$1,
+        spawn_id=$3
+        WHERE id=$2;`;
+
+        await db.query(sql, [
+          req.body.userState,
+          req.user.id,
+          req.body.entityId,
+        ]);
+        await db.query("COMMIT");
+
+        res.sendStatus(201);
+      } catch (e) {
+        await db.query("ROLLBACK");
+        console.log("Error updating user state", e);
+        res.sendStatus(500);
+      } finally {
+        db.release();
+      }
+    } else if (entityExists === undefined) {
+      try {
+        let result = { current_state: "observing" };
+
+        res.status(201).send(result);
+      } catch (e) {
+        console.log("Error retrieving entity", e);
+        res.sendStatus(500);
+      }
     }
   }
 });
@@ -82,8 +110,6 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
 // Perform a check to see if the entity still exists
 
 const entityCheck = async (entityId, db) => {
-  console.log("Checking entity", entityId);
-
   if (entityId) {
     try {
       const sql_entityCheck = `
