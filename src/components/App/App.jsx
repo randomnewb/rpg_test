@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import {
-    HashRouter as Router,
-    Redirect,
-    Route,
-    Switch,
+  HashRouter as Router,
+  Redirect,
+  Route,
+  Switch,
 } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -28,142 +28,154 @@ import defaultTheme from "./defaultTheme";
 let theme = createTheme(defaultTheme);
 
 function App() {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const user = useSelector((store) => store.user);
+  const user = useSelector((store) => store.user);
 
-    useEffect(() => {
-        dispatch({ type: "FETCH_USER" });
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch({ type: "FETCH_USER" });
+  }, [dispatch]);
 
-    return (
-        <ThemeProvider theme={theme}>
-            <Router>
-                <div>
-                    <Nav />
-                    <Switch>
-                        {/* Visiting localhost:3000 will redirect to localhost:3000/home */}
-                        <Redirect
-                            exact
-                            from="/"
-                            to="/world"
-                        />
+  return (
+    <ThemeProvider theme={theme}>
+      <Router>
+        <div>
+          <Nav />
 
-                        {/* Visiting localhost:3000/about will show the about page. */}
+          {user.current_state === "initialize" && (
+            <Switch>
+              <ProtectedRoute exact path="/initialize">
+                <SetupCharacter />
+              </ProtectedRoute>
 
-                        {/* For protected routes, the view could show one of several things on the same route.
+              <ProtectedRoute exact path="/world">
+                <SetupCharacter />
+              </ProtectedRoute>
+
+              <ProtectedRoute exact path="/zone">
+                <SetupCharacter />
+              </ProtectedRoute>
+
+              <ProtectedRoute exact path="/inventory">
+                <SetupCharacter />
+              </ProtectedRoute>
+            </Switch>
+          )}
+          <Switch>
+            {user.current_state === "defeated" && (
+              <Switch>
+                <ProtectedRoute exact path="/defeated">
+                  <Defeated />
+                </ProtectedRoute>
+
+                <ProtectedRoute exact path="/world">
+                  <Defeated />
+                </ProtectedRoute>
+
+                <ProtectedRoute exact path="/zone">
+                  <Defeated />
+                </ProtectedRoute>
+
+                <ProtectedRoute exact path="/inventory">
+                  <Defeated />
+                </ProtectedRoute>
+              </Switch>
+            )}
+            {(user.current_state === "observing" ||
+              user.current_state === "interacting") && (
+              <Switch>
+                <ProtectedRoute exact path="/world">
+                  <World />
+                </ProtectedRoute>
+
+                <ProtectedRoute exact path="/zone">
+                  <Zone />
+                </ProtectedRoute>
+
+                <ProtectedRoute exact path="/inventory">
+                  <Inventory />
+                </ProtectedRoute>
+              </Switch>
+            )}
+
+            {/* {user.current_state === "interacting" && (
+              <Switch>
+                <ProtectedRoute exact path="/world">
+                  <World />
+                </ProtectedRoute>
+
+                <ProtectedRoute exact path="/zone">
+                  <Zone />
+                </ProtectedRoute>
+
+                <ProtectedRoute exact path="/inventory">
+                  <Inventory />
+                </ProtectedRoute>
+              </Switch>
+            )} */}
+
+            {/* Visiting localhost:3000 will redirect to localhost:3000/home */}
+            <Redirect exact from="/" to="/world" />
+
+            {/* For protected routes, the view could show one of several things on the same route.
             Visiting localhost:3000/user will show the UserPage if the user is logged in.
             If the user is not logged in, the ProtectedRoute will show the LoginPage (component).
             Even though it seems like they are different pages, the user is always on localhost:3000/user */}
 
-                        <ProtectedRoute
-                            exact
-                            path="/defeated">
-                            <Defeated />
-                        </ProtectedRoute>
+            <Route exact path="/login">
+              {user.id ? (
+                // If the user is already logged in,
+                // redirect to the /user page
+                <Redirect to="/world" />
+              ) : (
+                // Otherwise, show the login page
+                <LoginPage />
+              )}
+            </Route>
 
-                        <ProtectedRoute
-                            exact
-                            path="/world">
-                            {user.current_state === "defeated" ? (
-                                <Defeated />
-                            ) : (
-                                <World />
-                            )}
-                        </ProtectedRoute>
+            <Route exact path="/registration">
+              {user.id ? (
+                // If the user is already logged in,
+                // redirect them to the /user page
+                <Redirect to="/world" />
+              ) : (
+                // Otherwise, show the registration page
+                <RegisterPage />
+              )}
+            </Route>
 
-                        <ProtectedRoute
-                            exact
-                            path="/zone">
-                            {user.current_state === "defeated" ? (
-                                <Defeated />
-                            ) : (
-                                <Zone />
-                            )}
-                        </ProtectedRoute>
+            {/* <Route exact path="/world">
+              {!user.id ? <Redirect to="/login" /> : <Redirect to="/world" />}
+            </Route> */}
 
-                        <ProtectedRoute
-                            exact
-                            path="/inventory">
-                            {user.current_state === "defeated" ? (
-                                <Defeated />
-                            ) : (
-                                <Inventory />
-                            )}
-                        </ProtectedRoute>
+            <Route exact path="/world">
+              {!user.id && user.current_state === "" && (
+                <Redirect to="/login" />
+              )}
+            </Route>
 
-                        <ProtectedRoute
-                            exact
-                            path="/initialize">
-                            <SetupCharacter />
-                        </ProtectedRoute>
+            <Route exact path="/zone">
+              {!user.id && user.current_state === "" && (
+                <Redirect to="/login" />
+              )}
+            </Route>
 
-                        <ProtectedRoute
-                            exact
-                            path="/world">
-                            {user.current_state === "initialize" ? (
-                                <SetupCharacter />
-                            ) : (
-                                <World />
-                            )}
-                        </ProtectedRoute>
+            <Route exact path="/inventory">
+              {!user.id && user.current_state === "" && (
+                <Redirect to="/login" />
+              )}
+            </Route>
 
-                        <ProtectedRoute
-                            exact
-                            path="/zone">
-                            {user.current_state === "initialize" ? (
-                                <SetupCharacter />
-                            ) : (
-                                <Zone />
-                            )}
-                        </ProtectedRoute>
-
-                        <ProtectedRoute
-                            exact
-                            path="/inventory">
-                            {user.current_state === "initialize" ? (
-                                <SetupCharacter />
-                            ) : (
-                                <Inventory />
-                            )}
-                        </ProtectedRoute>
-
-                        <Route
-                            exact
-                            path="/login">
-                            {user.id ? (
-                                // If the user is already logged in,
-                                // redirect to the /user page
-                                <Redirect to="/world" />
-                            ) : (
-                                // Otherwise, show the login page
-                                <LoginPage />
-                            )}
-                        </Route>
-
-                        <Route
-                            exact
-                            path="/registration">
-                            {user.id ? (
-                                // If the user is already logged in,
-                                // redirect them to the /user page
-                                <Redirect to="/world" />
-                            ) : (
-                                // Otherwise, show the registration page
-                                <RegisterPage />
-                            )}
-                        </Route>
-
-                        {/* If none of the other routes matched, we will show a 404. */}
-                        <Route>
-                            <h1>404</h1>
-                        </Route>
-                    </Switch>
-                    <Footer />
-                </div>
-            </Router>
-        </ThemeProvider>
-    );
+            {/* If none of the other routes matched, we will show a 404. */}
+            <Route>
+              <h1>404</h1>
+            </Route>
+          </Switch>
+          <Footer />
+        </div>
+      </Router>
+    </ThemeProvider>
+  );
 }
 
 export default App;

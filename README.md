@@ -90,6 +90,14 @@ Directory Structure:
 
 ## Bugs
 
+    [ ] The user.current_state in App.js doesn't work as intended
+        - The state isn't being picked up properly, whichever one is at the top overrides
+        the other conditionals (i.e., if a user's state is "defeated", it will show the proper component,
+        but doesn't work if the user's state is "initialize")
+    [x] Database: Stat table needs to have a default of 10 for max_health
+    [ ] Database: (Not really a bug) Stat table should have a stamina, min_stamina, and max_stamina for
+        upcoming stamina feature
+
     [ ] "Not really a bug" - Querying the database for an entry that doesn't exist
     throws an error in express and from the database
         - Is there a way to query for entries or check if an entry 'does not exist'
@@ -120,13 +128,14 @@ Directory Structure:
     [x] Show the player's health to them (on Zone and during Interaction)
     [x] Show the player's stats to them (on a Character Component)
 
-    [ ] Integrate player taking damage from enemies
+    [x] Integrate player taking damage from enemies
         -   Set this up on the user router?
         -   Going to try and set this up on the entity router as well
-    [ ] Player's health changes when taking damage from enemies
+    [x] Player's health changes when taking damage from enemies
         -   This information will be updated as usual when the player info is fetched
-    [ ] Need to update database tables (player max_health and max_stamina)
+    [ ] Need to update database tables (player max_stamina)
     [ ] When player's health is equal to or below 0, reset them back to the Zone view
+        -   Integrated a Defeated Component
         -   Make a separate component/view showing that the player lost their health
         -   Bonus would be adding the information of the entity to this view
         -   Button to reset the player's health, stamina back to part of their max_health/max_stamina

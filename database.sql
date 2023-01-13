@@ -24,7 +24,7 @@ CREATE TABLE "stat" (
 	"experience" INT DEFAULT 0,
 	"health" INT DEFAULT 0,
 	"min_health" INT DEFAULT 0,
-	"max_health" INT DEFAULT 0,
+	"max_health" INT DEFAULT 10,
 	"mana" INT DEFAULT 0,
 	"strength" INT DEFAULT 0,
 	"dexterity" INT DEFAULT 0,
@@ -78,12 +78,3 @@ VALUES (1, 2, 4), (3, 2, 4), (3, 2, 5);
 -- Zombies and boulder spawn in zone 2 (Mountain!)
 INSERT INTO "zone_stat" ("zone_id", "stat_id", "rate")
 VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
-
-
--- INSERT INTO stat ("user_id","name", "level", "health", "strength", "dexterity", "wisdom", "damage")
--- VALUES (1,'test', 1, 10, 1, 1, 1, 1)
--- RETURNING id;
-
--- UPDATE "user"
--- SET current_state='observing', stat_id='5'
--- WHERE id=1;
