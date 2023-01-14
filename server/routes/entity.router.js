@@ -36,25 +36,16 @@ router.get("/:id", rejectUnauthenticated, async (req, res) => {
 
 /**
  * INTERACT with specific entity by its id
- *
  */
 router.put("/:id", async (req, res) => {
   const db = await pool.connect();
 
   // If for some reason the entity is null as the user's spawn_id
   // they are interacting with, set the player to obxserving
-  if (req.params.id === undefined || req.params.id === null) {
+
+  if (!req.params.id) {
     try {
-      const sql_setUserState = `
-              UPDATE "user" 
-              SET current_state='observing'
-              WHERE id=$1
-              RETURNING current_state;
-              `;
-
-      const result = await db.query(sql_setUserState, [req.user.id]);
-
-      res.send(result.rows[0]);
+      res.send(updateUserState(req.user.id, "observing", db));
     } catch (err) {
       console.error(err);
       res.sendStatus(500);
@@ -62,29 +53,16 @@ router.put("/:id", async (req, res) => {
       db.release();
     }
   } else {
-    /**
-     *  Check to see if the entity exists
-     *  This check needs to happen first before anything to avoid problems with updates
-     *  or 'multiplayer', where someone else has already defeated an entity
-     *  that a user wants to interact with
-     */
+    //  Check to see if the entity exists
+    // This check needs to happen first before anything to avoid problems with updates
+    // or 'multiplayer', where someone else has already defeated an entity
+    // that a user wants to interact with
 
     const entityExists = await checkEntityExists(req.params.id, db);
-
     // If entity no longer exists, set the player's state back to observing
-
-    if (entityExists === undefined) {
+    if (!entityExists) {
       try {
-        const sql_setUserState = `
-            UPDATE "user" 
-            SET current_state='observing'
-            WHERE id=$1
-            RETURNING current_state;
-            `;
-
-        const result = await db.query(sql_setUserState, [req.user.id]);
-
-        res.send(result.rows[0]);
+        res.send(updateUserState(req.user.id, "observing", db));
       } catch (err) {
         console.error(err);
         res.sendStatus(500);
@@ -92,21 +70,19 @@ router.put("/:id", async (req, res) => {
         db.release();
       }
       // Or else perform the damage calculation
-    }
-    // If there is an entity (the id of the entity is not undefined basically)
-    // We will want to use the entity's id in the future to know how to calculate
-    // the damage against the player
-    else if (req.params.id > 0) {
+    } else if (entityExists) {
+      // If there is an entity (the id of the entity is not undefined basically)
+      // We will want to use the entity's id in the future to know how to calculate
+      // the damage against the player
+
       try {
         // First, check if the player would be defeated
         const healthOfPlayer = await checkHealthOfPlayer(req.user.id, db);
-
         const playerHurtCalculation = await performPlayerHurtCalculation(
           req.user.id,
           healthOfPlayer,
           db
         );
-
         // If the player has been defeated,
         // Send that data back to the client,
         // Skip the remainder of the calculations below
@@ -114,32 +90,21 @@ router.put("/:id", async (req, res) => {
           let result = { current_state: "defeated" };
           res.status(200).send(result);
         }
-
         // If the player has not been defeated, perform steps below
         if (playerHurtCalculation.current_state !== "defeated") {
           // Get the health of the entity
           const healthOfEntity = await checkHealthOfEntity(req.params.id, db);
-
           // Perform the damage calculation
           const damageCalculation = await performDamageCalculation(
             req.params.id,
             healthOfEntity,
             db
           );
-
           // If after the damage calculation, the entity has no more health
           // then send back info to update the user state to observing
           if (damageCalculation === "entity_defeated") {
-            const sql_setUserState = `
-                UPDATE "user" 
-                SET current_state='observing'
-                WHERE id=$1;
-                `;
-
-            await db.query(sql_setUserState, [req.user.id]);
-
-            let resetState = { current_state: "observing" };
-            res.status(201).send(resetState);
+            await updateUserState(req.user.id, "observing", db);
+            res.status(201).send({ current_state: "observing" });
           }
 
           // Or else send back the current health of the entity
@@ -336,5 +301,15 @@ const performPlayerHurtCalculation = async (playerId, playerHealth, db) => {
     }
   }
 };
+
+async function updateUserState(id, state, db) {
+  const sql = `
+  UPDATE "user" 
+  SET current_state = $1 
+  WHERE id = $2 
+  RETURNING current_state;`;
+  const result = await db.query(sql, [state, id]);
+  return result.rows[0];
+}
 
 module.exports = router;
