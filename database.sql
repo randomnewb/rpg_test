@@ -78,3 +78,4 @@ VALUES (1, 2, 4), (3, 2, 4), (3, 2, 5);
 -- Zombies and boulder spawn in zone 2 (Mountain!)
 INSERT INTO "zone_stat" ("zone_id", "stat_id", "rate")
 VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
+
