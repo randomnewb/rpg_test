@@ -106,9 +106,7 @@ Directory Structure:
     - Implement dice/card system
     - A log/narrator - Keeps a record of what happens during an interaction
         i.e., "Boulder took 2 damage from you", "Zombie took a bite out of you for 1 damage"
-    - Setup a stamina system - Interacting utilizes stamina, players will have to figure out how to balance this resource along with their health and
-        items to be successful
-    - Setup a health system for the player - Some entities bite back, if a player reaches 0 or less health, the event is automatically abandoned
+    - Setup a stamina system - Interacting utilizes stamina, players will have to figure out how to balance this resource along with their health and items to be successful
     - Set up a player stats system and view - Check out one's own stats, so fast, so smart, so strong! You're close to leveling up!
     - Setup an inventory system - One more reason to "Wander" and chip away at this Boulder! It might drop something useful
     - Add polish to the pig - How about some images? How about some more color?

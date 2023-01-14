@@ -10,15 +10,6 @@ const Main = () => {
 
   const zoneIdToName = ["None", "Forest", "Mountain"];
 
-  // Psuedo-loading so that there is no flashing when components re-render/grabbed from the server
-  // const [loading, setLoading] = useState(true);
-
-  // let loadTime = randomNumRange(550, 700);
-
-  const randomNumRange = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
   const interactEntity = (e) => {
     dispatch({
       type: "UPDATE_USER_STATE",
@@ -28,10 +19,6 @@ const Main = () => {
     dispatch({
       type: "FETCH_ENTITY_DETAIL",
       payload: e.target.id,
-    });
-
-    dispatch({
-      type: "FETCH_USER",
     });
   };
 
