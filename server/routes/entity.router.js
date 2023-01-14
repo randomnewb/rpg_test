@@ -41,7 +41,7 @@ router.put("/:id", async (req, res) => {
   const db = await pool.connect();
 
   // If for some reason the entity is null as the user's spawn_id
-  // they are interacting with, set the player to obxserving
+  // they are interacting with, set the player to observing
 
   if (!req.params.id) {
     try {
@@ -237,6 +237,18 @@ const checkHealthOfPlayer = async (playerId, db) => {
   } catch (e) {
     console.log("Couldn't get player's health", e);
   }
+};
+
+const getEntityReward = async (entityId, db) => {
+  // We need to know the stat_id of the entity so we can get its possible rewards
+
+  const sql_checkEntityExists = `
+  SELECT spawn.*, stat.*
+  FROM spawn spawn, stat stat
+  WHERE 
+	spawn.stat_id = stat.id
+	AND spawn.id = $1;
+  `;
 };
 
 const performPlayerHurtCalculation = async (playerId, playerHealth, db) => {
