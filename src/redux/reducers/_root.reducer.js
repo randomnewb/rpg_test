@@ -4,6 +4,7 @@ import user from "./user.reducer";
 import entity from "./entity.reducer";
 import spawn from "./spawn.reducer";
 import stat from "./stat.reducer";
+import inventory from "./inventory.reducer";
 
 // rootReducer is the primary reducer for our entire project
 // It bundles up all of the other reducers so our project can use them.
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   entity, // stores entity information
   spawn, // stores spawned entities
   stat, // stores stat information
+  inventory, // stores inventory information
 });
 
 export default rootReducer;

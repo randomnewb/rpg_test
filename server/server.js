@@ -12,6 +12,7 @@ const userRouter = require("./routes/user.router");
 const spawnRouter = require("./routes/spawn.router");
 const entityRouter = require("./routes/entity.router");
 const statRouter = require("./routes/stat.router");
+const inventoryRouter = require("./routes/inventory.router");
 
 // Body parser middleware
 app.use(bodyParser.json());
@@ -29,6 +30,7 @@ app.use("/api/user", userRouter);
 app.use("/api/spawn", spawnRouter);
 app.use("/api/entity", entityRouter);
 app.use("/api/stat", statRouter);
+app.use("/api/inventory", inventoryRouter);
 
 // Serve static files
 app.use(express.static("build"));

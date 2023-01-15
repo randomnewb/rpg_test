@@ -142,3 +142,9 @@ Directory Structure:
 ## Possible Problems
 
     - How to avoid duplicates items? How to stack items?
+
+<!-- SELECT inventory.*, item.*
+FROM "user", inventory, item
+WHERE
+	inventory.user_id = user.id
+	AND item.id = user.id; -->
