@@ -16,7 +16,7 @@ const Inventory = () => {
   return (
     <div>
       <Typography> Inventory View</Typography>
-      {/* <Typography> {JSON.stringify(inventory)}</Typography> */}
+      <Typography> {JSON.stringify(inventory)}</Typography>
     </div>
   );
 };
