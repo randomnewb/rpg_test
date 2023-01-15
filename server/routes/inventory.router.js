@@ -19,7 +19,7 @@ router.get("/", rejectUnauthenticated, (req, res) => {
   pool
     .query(sql, [req.user.id])
     .then((result) => {
-      res.status(200).send(result.rows[0]);
+      res.status(200).send(result.rows);
     })
     .catch((e) => {
       console.log("Error getting player's inventory", e);

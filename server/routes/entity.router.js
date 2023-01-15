@@ -40,6 +40,8 @@ router.get("/:id", rejectUnauthenticated, async (req, res) => {
 router.put("/:id", async (req, res) => {
   const db = await pool.connect();
 
+  const entityReward = await getEntityReward(req.params.id, db);
+
   // If for some reason the entity is null as the user's spawn_id
   // they are interacting with, set the player to observing
 
@@ -103,7 +105,18 @@ router.put("/:id", async (req, res) => {
           // If after the damage calculation, the entity has no more health
           // then send back info to update the user state to observing
           if (damageCalculation === "entity_defeated") {
+            // Provide reward to player here
+
+            await generateLootAndRewardPlayer(req.user.id, entityReward, db);
+
             await updateUserState(req.user.id, "observing", db);
+
+            // Perhaps also send the information about the reward
+            // back to the client, can change generateLootAndRewardPlayer
+            // to be const reward = generateLootAndRewardPlayer
+            // and this stores the reward
+            // Could also change the current_state to victorious
+            // and show a different view with the reward information
             res.status(201).send({ current_state: "observing" });
           }
 
@@ -122,6 +135,23 @@ router.put("/:id", async (req, res) => {
     }
   }
 });
+
+const getEntityReward = async (entityId, db) => {
+  // We need to know the stat_id of the entity so we can get its possible rewards
+  // Loot table of entity player is interacting with
+
+  const sql_getEntityReward = `
+    SELECT stat_item.item_id, stat_item.rate
+    FROM spawn, stat, stat_item
+    WHERE 
+    spawn.id = $1
+    AND spawn.stat_id = stat.id
+    AND stat.id = stat_item.stat_id;
+  `;
+
+  const result = await db.query(sql_getEntityReward, [entityId]);
+  return result.rows;
+};
 
 const checkEntityExists = async (entityId, db) => {
   // Check to see if the spawned entity the user is interacting with still exists
@@ -217,6 +247,52 @@ const performDamageCalculation = async (entityId, entityHealth, db) => {
   }
 };
 
+const generateLootAndRewardPlayer = async (playerId, loot, db) => {
+  // Generate a weighted random reward from the loot
+
+  function weighted_random(options) {
+    var i;
+
+    var rates = [];
+
+    for (i = 0; i < options.length; i++)
+      rates[i] = options[i].rate + (rates[i - 1] || 0);
+
+    var random = Math.random() * rates[rates.length - 1];
+
+    for (i = 0; i < rates.length; i++) if (rates[i] > random) break;
+
+    return options[i].item_id;
+  }
+
+  let chosenItem = weighted_random(loot);
+
+  // Add an entry to the inventory table for the player
+
+  // If it is a new entry, INSERT a new entry
+  // If it is not, UPDATE the entry
+
+  const sql_addItemToInventory = `
+    INSERT INTO inventory (item_id, user_id, quantity)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (item_id, user_id)
+    DO UPDATE SET quantity = inventory.quantity + $3;
+    `;
+
+  try {
+    await db.query("BEGIN");
+
+    await db.query(sql_addItemToInventory, [chosenItem, playerId, 1]);
+
+    await db.query("COMMIT");
+  } catch (e) {
+    await db.query("ROLLBACK");
+    console.log(e);
+  }
+
+  return chosenItem;
+};
+
 const checkHealthOfPlayer = async (playerId, db) => {
   // Get health of player
 
@@ -237,18 +313,6 @@ const checkHealthOfPlayer = async (playerId, db) => {
   } catch (e) {
     console.log("Couldn't get player's health", e);
   }
-};
-
-const getEntityReward = async (entityId, db) => {
-  // We need to know the stat_id of the entity so we can get its possible rewards
-
-  const sql_checkEntityExists = `
-  SELECT spawn.*, stat.*
-  FROM spawn spawn, stat stat
-  WHERE 
-	spawn.stat_id = stat.id
-	AND spawn.id = $1;
-  `;
 };
 
 const performPlayerHurtCalculation = async (playerId, playerHealth, db) => {

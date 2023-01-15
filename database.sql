@@ -56,7 +56,8 @@ CREATE TABLE "spawn" (
 CREATE TABLE "inventory" (
 	"item_id" INT REFERENCES "item",
 	"user_id" INT REFERENCES "user",
-	"quantity" INT
+	"quantity" INT,
+	UNIQUE ("item_id", "user_id")
 );
 
 -- Determines what entities spawn in a zone, this is a many-to-many relationship

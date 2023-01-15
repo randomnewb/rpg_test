@@ -76,6 +76,8 @@ Directory Structure:
 
     [ ] Database has been changed, bit.io and other databases need to be updated accordingly
     [ ] Add image to stat table and to item table which will be the svg/image of the entry?
+    [ ] Optionally add a victorious current_state where
+            user can see and confirm reward after successful interaction with entity
     [ ] Setup a log/narrator
     [ ] MP/Stamina System
     [ ] Also, spawn 2-5 entities if there are less than 0 entities
@@ -98,6 +100,10 @@ Directory Structure:
     throws an error in express and from the database
         - Is there a way to query for entries or check if an entry 'does not exist'
         and therefore return a non-error message with an empty result?
+
+    [ ] While the player is engaged in combat, they should not be able to switch zones
+    [ ] Might not be necessary to initialize inventory for player,
+        but could be funny still to include the pocket lint
 
 ## Possible solutions
 
@@ -128,18 +134,16 @@ Directory Structure:
     [x] - Inventory table
 
     Maybe for inventory management
-    [ ] - Inventory reducer
-    [ ] - Inventory saga
-    [ ] - Inventory router
+    [x] - Inventory reducer
+    [x] - Inventory saga
+    [x] - Inventory router
 
     As part of initialization
-    [ ] - Create one entry into player's inventory
+    [x] - Create one entry into player's inventory
 
-    [ ] - Server-side: get info from loot table
-    [ ] - Server-side: generate random item by entity
-    [ ] - Server-side: inserting/saving items to a user's inventory
-    [ ] - Client-side: seeing items in inventory
+    [x] - Server-side: get info from loot table
+    [x] - Server-side: generate random item by entity
+    [x] - Server-side: inserting/saving items to a user's inventory
+    [x] - Client-side: seeing items in inventory
 
 ## Possible Problems
-
-    - How to avoid duplicates items? How to stack items?
