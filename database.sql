@@ -13,7 +13,6 @@ CREATE TABLE "user" (
 	"current_state" VARCHAR (255) DEFAULT 'initialize'
 );
 
-
 CREATE TABLE "stat" (
 	"id" SERIAL PRIMARY KEY,
 	"user_id" INT REFERENCES "user",
@@ -34,11 +33,30 @@ CREATE TABLE "stat" (
 	"resistance" INT DEFAULT 0
 );
 
+CREATE TABLE "item" (
+	"id" SERIAL PRIMARY KEY,
+	"name" varchar(255),
+	"type" varchar(255),
+	"value" INT
+);
+
+CREATE TABLE "stat_item" (
+	"stat_id" INT REFERENCES "stat",
+	"item_id" INT REFERENCES "item",
+	"rate" INT
+);
+
 CREATE TABLE "spawn" (
 	"id" SERIAL PRIMARY KEY,
-	"stat_id" INT references "stat",
-	"zone_id" INT references "zone",
+	"stat_id" INT REFERENCES "stat",
+	"zone_id" INT REFERENCES "zone",
 	"current_health" INT
+);
+
+CREATE TABLE "inventory" (
+	"item_id" INT REFERENCES "item",
+	"user_id" INT REFERENCES "user",
+	"quantity" INT
 );
 
 -- Determines what entities spawn in a zone, this is a many-to-many relationship
@@ -51,13 +69,18 @@ CREATE TABLE "zone_stat" (
 	"rate" INT
 );
 
+-- Create zones (forest and mountain)
 
 INSERT INTO "zone" ("name")
 VALUES ('Forest'), ('Mountain');
 
+-- Create entities 
+-- 1: zombie
+-- 2: oak tree
+-- 3: boulder
+
 INSERT INTO "stat" ("name", "type", "min_health", "max_health")
 VALUES('Zombie', 'mob', 2, 5), ('Oak Tree', 'woodcutting', 2, 3), ('Boulder', 'mining', 3, 6);
-
 
 -- Altering the user table to add a reference to spawn_id because
 -- PostgresQL is struggling to create it when there's no reference
@@ -66,7 +89,7 @@ ALTER TABLE "user"
 ADD "spawn_id" INT REFERENCES "spawn" ON DELETE SET NULL,
 ADD	"stat_id" INT REFERENCES "stat" ON DELETE CASCADE;
 
--- Sample Data
+-- Sample data to load when the database is initialized for the very first time
 
 INSERT INTO "spawn" ("stat_id", "zone_id", "current_health")
 VALUES (1, 1, 5), (1, 1, 3), (2, 1, 4);
@@ -74,8 +97,22 @@ VALUES (1, 1, 5), (1, 1, 3), (2, 1, 4);
 INSERT INTO "spawn" ("stat_id","zone_id", "current_health")
 VALUES (1, 2, 4), (3, 2, 4), (3, 2, 5);
 
+-- Create the zone/entity spawning table data
 -- For example, zombies and trees spawn in zone 1 (Forest!)
 -- Zombies and boulder spawn in zone 2 (Mountain!)
+-- These entities have weighted probabilities associated to their spawning
 INSERT INTO "zone_stat" ("zone_id", "stat_id", "rate")
 VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
 
+-- Create items
+-- 1: Heartstone
+-- 2: Protein Powder
+-- 3: Root
+-- 4: Not a Coin
+INSERT INTO "item" ("name", "type", "value")
+VALUES ('Heartstone', 'health', 1), ('Protein Powder', 'strength', 1), ('Root', 'wisdom', 1), ('Not a Coin', 'experience', 1);
+
+-- Create the item/entity table (loot table)
+
+INSERT INTO "stat_item" ("stat_id", "item_id", "rate")
+VALUES (1, 2, 50), (1, 4, 75), (2, 3, 50), (2, 4, 75), (3, 1, 50), (3, 4, 75);
