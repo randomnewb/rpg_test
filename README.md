@@ -122,9 +122,23 @@ Directory Structure:
 
 ## Working on
 
-    [ ] - Loot table
-    [ ] - Inventory table
+    [x] - Loot table (with some entries)
+    [x] - Items (with examples) table
+    [x] - Inventory table
+
+    Maybe for inventory management
+    [ ] - Inventory reducer
+    [ ] - Inventory saga
+    [ ] - Inventory router
+
+    As part of initialization
+    [ ] - Create one entry into player's inventory
+
     [ ] - Server-side: get info from loot table
     [ ] - Server-side: generate random item by entity
     [ ] - Server-side: inserting/saving items to a user's inventory
     [ ] - Client-side: seeing items in inventory
+
+## Possible Problems
+
+    - How to avoid duplicates items? How to stack items?

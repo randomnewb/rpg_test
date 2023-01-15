@@ -109,8 +109,12 @@ VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
 -- 2: Protein Powder
 -- 3: Root
 -- 4: Not a Coin
+-- 5: Lint
 INSERT INTO "item" ("name", "type", "value")
 VALUES ('Heartstone', 'health', 1), ('Protein Powder', 'strength', 1), ('Root', 'wisdom', 1), ('Not a Coin', 'experience', 1);
+
+INSERT INTO "item" ("name", "type", "value")
+VALUES ('Lint', 'miscellaneous', 1);
 
 -- Create the item/entity table (loot table)
 

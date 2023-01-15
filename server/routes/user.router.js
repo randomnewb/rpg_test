@@ -186,6 +186,16 @@ router.put("/initialize", rejectUnauthenticated, async (req, res) => {
 
     await db.query("COMMIT");
 
+    const sql_setupInventory = `
+    INSERT INTO inventory
+    (item_id, user_id, quantity)
+    VALUES(5, $1, 1);
+    `;
+
+    await db.query(sql_setupInventory, [req.user.id]);
+
+    await db.query("COMMIT");
+
     const sql_tieUserStat = `
     UPDATE "user"
     SET current_state='observing', stat_id=$1
