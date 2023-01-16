@@ -2,23 +2,23 @@
 
 Before you get started, make sure you have the following software installed on your computer:
 
-- [Node.js](https://nodejs.org/en/)
-- [PostrgeSQL](https://www.postgresql.org/)
-- [Nodemon](https://nodemon.io/)
+-   [Node.js](https://nodejs.org/en/)
+-   [PostrgeSQL](https://www.postgresql.org/)
+-   [Nodemon](https://nodemon.io/)
 
-- Database table is 'rpg_app'
+-   Database table is 'rpg_app'
 
 ## Development Setup Instructions
 
-- Run `npm install`
-- Create a `.env` file at the root of the project and paste this line into the file:
-  ```
-  SERVER_SESSION_SECRET=superDuperSecret
-  ```
-- Start postgres if not running already by using `brew services start postgresql`
-- Run `npm run server`
-- Run `npm run client`
-- Navigate to `localhost:3000`
+-   Run `npm install`
+-   Create a `.env` file at the root of the project and paste this line into the file:
+    ```
+    SERVER_SESSION_SECRET=superDuperSecret
+    ```
+-   Start postgres if not running already by using `brew services start postgresql`
+-   Run `npm run server`
+-   Run `npm run client`
+-   Navigate to `localhost:3000`
 
 ## Debugging
 
@@ -39,9 +39,9 @@ Keep in mind that once you using the login route, Postman will manage your sessi
 1. Start the server - `npm run server`
 2. Import the sample routes JSON file [v2](./PostmanPrimeSoloRoutesv2.json) by clicking `Import` in Postman. Select the file.
 3. Click `Collections` and `Send` the following three calls in order:
-   1. `POST /api/user/register` registers a new user, see body to change username/password
-   2. `POST /api/user/login` will login a user, see body to change username/password
-   3. `GET /api/user` will get user information, by default it's not very much
+    1. `POST /api/user/register` registers a new user, see body to change username/password
+    2. `POST /api/user/login` will login a user, see body to change username/password
+    3. `GET /api/user` will get user information, by default it's not very much
 
 After running the login route above, you can try any other route you've created that requires a logged in user!
 
@@ -49,18 +49,18 @@ After running the login route above, you can try any other route you've created 
 
 Before pushing to Heroku, run `npm run build` in terminal. This will create a build folder that contains the code Heroku will be pointed at. You can test this build by typing `npm start`. Keep in mind that `npm start` will let you preview the production build but will **not** auto update.
 
-- Start postgres if not running already by using `brew services start postgresql`
-- Run `npm start`
-- Navigate to `localhost:5000`
+-   Start postgres if not running already by using `brew services start postgresql`
+-   Run `npm start`
+-   Navigate to `localhost:5000`
 
 ## Lay of the Land
 
 Directory Structure:
 
-- `src/` contains the React application
-- `public/` contains static assets for the client-side
-- `build/` after you build the project, contains the transpiled code from `src/` and `public/` that will be viewed on the production site
-- `server/` contains the Express App
+-   `src/` contains the React application
+-   `public/` contains static assets for the client-side
+-   `build/` after you build the project, contains the transpiled code from `src/` and `public/` that will be viewed on the production site
+-   `server/` contains the Express App
 
 ## Deployment
 
@@ -74,6 +74,14 @@ Directory Structure:
 
 ## To-Do's
 
+    [ ] Implement zone unlocking
+        - possible methods
+        1. Zones are gated by an unlock_level parameter
+            -  Players have an unlock_level as well, if the player's unlock level
+            matches any of the unlocked zones or lower, they will have access to the area
+        1. Many-to-many table where users have access to zones and zones have a linked user_id
+        1. Players are given explicit access to zones and this is stored in something like an array
+    [ ] Postman/route tester - people are still able to make requests rapidly via this method
     [ ] Database has been changed, bit.io and other databases need to be updated accordingly
     [ ] Add image to stat table and to item table which will be the svg/image of the entry?
     [ ] Optionally add a victorious current_state where
