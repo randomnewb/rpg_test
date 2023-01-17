@@ -139,7 +139,10 @@ Directory Structure:
 
 ## Working on
 
-    [ ] GET player's stats, which include damage, during interaction step
-    [ ] Use this variable damage for the damage calculation
+    [x] GET player's stats, which include damage, during interaction step
+    [x] Use this variable damage for the damage calculation
+    [ ] Implement items in inventory granting bonuses or changes to player's stats
+    [ ] Implement enemies with armor
+    [ ] Implement enemies with types of resistances
 
 ## Possible Problems
