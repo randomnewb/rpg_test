@@ -79,15 +79,12 @@ router.put("/:id", async (req, res) => {
 
       try {
         // First, check if the player would be defeated
-        const healthOfPlayer = await checkHealthOfPlayer(req.user.id, db);
+        const healthOfPlayer = await getPlayerStats(req.user.id, db);
         const playerHurtCalculation = await performPlayerHurtCalculation(
           req.user.id,
           healthOfPlayer,
           db
         );
-        // If the player has been defeated,
-        // Send that data back to the client,
-        // Skip the remainder of the calculations below
         if (playerHurtCalculation.current_state === "defeated") {
           let result = { current_state: "defeated" };
           res.status(200).send(result);
@@ -96,17 +93,20 @@ router.put("/:id", async (req, res) => {
         if (playerHurtCalculation.current_state !== "defeated") {
           // Get the health of the entity
           const healthOfEntity = await checkHealthOfEntity(req.params.id, db);
+
+          // Get the stats of the player
+          const playerStats = await getPlayerStats(req.user.id, db);
+
           // Perform the damage calculation
           const damageCalculation = await performDamageCalculation(
             req.params.id,
+            playerStats,
             healthOfEntity,
             db
           );
           // If after the damage calculation, the entity has no more health
           // then send back info to update the user state to observing
           if (damageCalculation === "entity_defeated") {
-            // Provide reward to player here
-
             await generateLootAndRewardPlayer(req.user.id, entityReward, db);
 
             await updateUserState(req.user.id, "observing", db);
@@ -192,14 +192,17 @@ const checkHealthOfEntity = async (entityId, db) => {
   }
 };
 
-const performDamageCalculation = async (entityId, entityHealth, db) => {
-  // For now, just subtract 1 health from entity
-  // If the entity's health is equal to or less than 0
-  // Remove the entity
-  // Or else just send the entity with updated health
+const performDamageCalculation = async (
+  entityId,
+  playerStats,
+  entityHealth,
+  db
+) => {
+  let playerDamage = playerStats.damage;
+
   entityId = parseInt(entityId);
 
-  entityHealth = entityHealth - 1;
+  entityHealth = entityHealth - playerDamage;
 
   if (entityHealth <= 0) {
     try {
@@ -293,7 +296,7 @@ const generateLootAndRewardPlayer = async (playerId, loot, db) => {
   return chosenItem;
 };
 
-const checkHealthOfPlayer = async (playerId, db) => {
+const getPlayerStats = async (playerId, db) => {
   // Get health of player
 
   try {
@@ -309,9 +312,9 @@ const checkHealthOfPlayer = async (playerId, db) => {
       playerId,
     ]);
 
-    return checkHealthOfPlayer.rows[0].health;
+    return checkHealthOfPlayer.rows[0];
   } catch (e) {
-    console.log("Couldn't get player's health", e);
+    console.log("Couldn't get player's stats", e);
   }
 };
 
@@ -325,9 +328,11 @@ const performPlayerHurtCalculation = async (playerId, playerHealth, db) => {
    * Or else, just update their health in the database and return this
    */
 
-  playerHealth = playerHealth - 1;
+  let health = playerHealth.health;
 
-  if (playerHealth <= 0) {
+  health = health - 1;
+
+  if (health <= 0) {
     try {
       await db.query("BEGIN");
 
@@ -351,26 +356,26 @@ const performPlayerHurtCalculation = async (playerId, playerHealth, db) => {
       await db.query("ROLLBACK");
       console.log(e);
     }
-  } else if (playerHealth >= 1) {
+  } else if (health >= 1) {
     try {
       await db.query("BEGIN");
 
       // Update the player's health
-      const sql_updatePlayerHealth = `
+      const sql_updateHealth = `
             UPDATE "stat"
             SET health = $2
             WHERE "stat".user_id = $1
             RETURNING health;
             `;
 
-      const updatedPlayerHealth = await db.query(sql_updatePlayerHealth, [
+      const updatedHealth = await db.query(sql_updateHealth, [
         playerId,
-        playerHealth,
+        health,
       ]);
 
       await db.query("COMMIT");
 
-      return updatedPlayerHealth.rows[0];
+      return updatedHealth.rows[0];
     } catch (e) {
       await db.query("ROLLBACK");
       console.log(e);
