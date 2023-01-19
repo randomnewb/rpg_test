@@ -17,6 +17,7 @@ CREATE TABLE "stat" (
 	"id" SERIAL PRIMARY KEY,
 	"user_id" INT REFERENCES "user",
 	"name" VARCHAR (255),
+	"class" VARCHAR (255), 
 	"type" VARCHAR (255),
 	"rarity" INT DEFAULT 1,
 	"level" INT DEFAULT 0,
@@ -24,11 +25,18 @@ CREATE TABLE "stat" (
 	"health" INT DEFAULT 0,
 	"min_health" INT DEFAULT 0,
 	"max_health" INT DEFAULT 10,
+	"stamina" INT DEFAULT 0,
+	"min_stamina" INT DEFAULT 0,
+	"max_stamina" INT DEFAULT 10,
 	"mana" INT DEFAULT 0,
+	"min_mana" INT DEFAULT 0,
+	"max_mana" INT DEFAULT 10,
 	"strength" INT DEFAULT 0,
 	"dexterity" INT DEFAULT 0,
 	"wisdom" INT DEFAULT 0,
 	"damage" INT DEFAULT 0,
+	"min_damage" INT DEFAULT 0,
+	"max_damage" INT DEFAULT 0,
 	"armor" INT DEFAULT 0,
 	"resistance" INT DEFAULT 0
 );
@@ -36,7 +44,9 @@ CREATE TABLE "stat" (
 CREATE TABLE "item" (
 	"id" SERIAL PRIMARY KEY,
 	"name" varchar(255),
+	"attribute" varchar (255),
 	"type" varchar(255),
+	"equippable" boolean,
 	"value" INT
 );
 
@@ -60,6 +70,12 @@ CREATE TABLE "inventory" (
 	UNIQUE ("item_id", "user_id")
 );
 
+CREATE TABLE "equipped" (
+	"item_id" INT REFERENCES "item",
+	"user_id" INT REFERENCES "user",
+	"quantity" INT,
+	UNIQUE ("item_id", "user_id")
+);
 -- Determines what entities spawn in a zone, this is a many-to-many relationship
 -- A zone could potentially be able to spawn many entities
 -- That might spawn in other zones as well (like Zombie overlaps Zone 1 and 2)
@@ -111,11 +127,9 @@ VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
 -- 3: Root
 -- 4: Not a Coin
 -- 5: Lint
-INSERT INTO "item" ("name", "type", "value")
-VALUES ('Heartstone', 'health', 1), ('Protein Powder', 'strength', 1), ('Root', 'wisdom', 1), ('Not a Coin', 'experience', 1);
 
-INSERT INTO "item" ("name", "type", "value")
-VALUES ('Lint', 'miscellaneous', 1);
+INSERT INTO "item" ("name", "attribute", "value", "type", "equippable")
+VALUES ('Heartstone', 'health', 1, 'pog', TRUE), ('Protein Powder', 'strength', 1, 'pog', TRUE), ('Root', 'wisdom', 1, 'pog', TRUE), ('Not a Coin', 'experience', 1, 'experience', FALSE), ('Lint', 'miscellaneous', 1, 'pog', FALSE);
 
 -- Create the item/entity table (loot table)
 

@@ -42,6 +42,16 @@ const defaultTheme = {
         // },
       },
     },
+    MuiIconButton: {
+      defaultProps: {
+        style: {
+          "&:hover": {
+            color: "#181425",
+            backgroundColor: "#e4a672",
+          },
+        },
+      },
+    },
     MuiButton: {
       defaultProps: {
         variant: "contained",

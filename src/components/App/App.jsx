@@ -20,6 +20,7 @@ import Inventory from "../Inventory/Inventory";
 import Zone from "../Zone/Zone";
 import SetupCharacter from "../SetupCharacter/SetupCharacter";
 import Defeated from "../Defeated/Defeated";
+import Character from "../Character/Character";
 
 import "./App.css";
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -59,6 +60,10 @@ function App() {
               <ProtectedRoute exact path="/inventory">
                 <SetupCharacter />
               </ProtectedRoute>
+
+              <ProtectedRoute exact path="/character">
+                <SetupCharacter />
+              </ProtectedRoute>
             </Switch>
           )}
           <Switch>
@@ -79,6 +84,10 @@ function App() {
                 <ProtectedRoute exact path="/inventory">
                   <Defeated />
                 </ProtectedRoute>
+
+                <ProtectedRoute exact path="/character">
+                  <Defeated />
+                </ProtectedRoute>
               </Switch>
             )}
             {(user.current_state === "observing" ||
@@ -94,6 +103,10 @@ function App() {
 
                 <ProtectedRoute exact path="/inventory">
                   <Inventory />
+                </ProtectedRoute>
+
+                <ProtectedRoute exact path="/character">
+                  <Character />
                 </ProtectedRoute>
               </Switch>
             )}
@@ -185,6 +198,17 @@ function App() {
               )}
             </Route>
 
+            <Route exact path="/character">
+              {user.id ? (
+                // If the user is already logged in,
+                // redirect them to the /user page
+                <Redirect to="/character" />
+              ) : (
+                // Otherwise, show the registration page
+                <RegisterPage />
+              )}
+            </Route>
+
             <Route exact path="/defeated">
               {user.id && user.current_state === "initialize" ? (
                 // If the user is already logged in,
@@ -219,6 +243,12 @@ function App() {
             </Route>
 
             <Route exact path="/inventory">
+              {!user.id && user.current_state === "" && (
+                <Redirect to="/login" />
+              )}
+            </Route>
+
+            <Route exact path="/character">
               {!user.id && user.current_state === "" && (
                 <Redirect to="/login" />
               )}

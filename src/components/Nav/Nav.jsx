@@ -29,6 +29,10 @@ function Nav() {
               Inventory
             </Link>
 
+            <Link className="navLink" to="/character">
+              Character
+            </Link>
+
             <LogOutButton className="navLink" />
           </>
         )}

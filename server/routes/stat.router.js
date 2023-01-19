@@ -9,7 +9,7 @@ const {
 
 router.get("/", rejectUnauthenticated, (req, res) => {
   const sql = `
-        SELECT stat.name, stat.LEVEL, stat.experience, stat.health, stat.strength, stat.dexterity, stat.wisdom, stat.damage, stat.armor
+        SELECT *
         FROM "stat", "user"
         WHERE 
         "user".id = $1

@@ -1,8 +1,8 @@
-const inventoryReducer = (state = [], action) => {
+const equippedReducer = (state = [], action) => {
   switch (action.type) {
-    case "SET_INVENTORY":
+    case "SET_EQUIPMENT":
       return action.payload;
-    case "REMOVE_INVENTORY":
+    case "REMOVE_EQUIPMENT":
       return [
         ...state.slice(0, action.payload),
         ...state.slice(action.payload + 1),
@@ -12,4 +12,4 @@ const inventoryReducer = (state = [], action) => {
   }
 };
 
-export default inventoryReducer;
+export default equippedReducer;

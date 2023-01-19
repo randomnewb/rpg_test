@@ -5,6 +5,7 @@ import userSaga from "./user.saga";
 import spawnSaga from "./spawn.saga";
 import entitySaga from "./entity.saga";
 import inventorySaga from "./inventory.saga";
+import equipmentSaga from "./equipment.saga";
 
 // rootSaga is the primary saga.
 // It bundles up all of the other sagas so our project can use them.
@@ -21,5 +22,6 @@ export default function* rootSaga() {
     spawnSaga(),
     entitySaga(),
     inventorySaga(),
+    equipmentSaga(),
   ]);
 }
