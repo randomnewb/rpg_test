@@ -2,85 +2,98 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, Container } from "@mui/material";
 import Interaction from "../Interaction/Interaction";
 
 const Main = () => {
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
+    const history = useHistory();
 
-  const zoneIdToName = ["None", "Forest", "Mountain"];
+    const zoneIdToName = ["None", "Forest", "Mountain"];
 
-  const interactEntity = (e) => {
-    dispatch({
-      type: "UPDATE_USER_STATE",
-      payload: { userState: "interacting", entityId: e.target.id },
-    });
+    const returnToWorld = (e) => {
+        history.push("/world");
+    };
 
-    dispatch({
-      type: "FETCH_ENTITY_DETAIL",
-      payload: e.target.id,
-    });
-  };
+    const interactEntity = (e) => {
+        dispatch({
+            type: "UPDATE_USER_STATE",
+            payload: { userState: "interacting", entityId: e.target.id },
+        });
 
-  // Store
-  const spawn = useSelector((store) => store.spawn);
-  const user = useSelector((store) => store.user);
+        dispatch({
+            type: "FETCH_ENTITY_DETAIL",
+            payload: e.target.id,
+        });
+    };
 
-  const searchForEntities = () => {
-    dispatch({ type: "POST_SPAWN_BY_ZONE", payload: user.current_zone });
-  };
+    // Store
+    const spawn = useSelector((store) => store.spawn);
+    const user = useSelector((store) => store.user);
 
-  useEffect(() => {
-    dispatch({ type: "FETCH_SPAWN_BY_ZONE", payload: user.current_zone });
-  }, []);
+    const searchForEntities = () => {
+        dispatch({ type: "POST_SPAWN_BY_ZONE", payload: user.current_zone });
+    };
 
-  // Spawns 2 to 5 entities on load
-  // useEffect(() => {
-  //   spawnRandomEntities(2, 5);
-  // }, []);
+    useEffect(() => {
+        dispatch({ type: "FETCH_SPAWN_BY_ZONE", payload: user.current_zone });
+    }, []);
 
-  // if (loading) {
-  //   return (
-  //     <div>
-  //       <Typography>Loading...</Typography>
-  //     </div>
-  //   );
-  // }
+    // Spawns 2 to 5 entities on load
+    // useEffect(() => {
+    //   spawnRandomEntities(2, 5);
+    // }, []);
 
-  return (
-    <div>
-      <div>
-        <Typography>Current Zone: {zoneIdToName[user.current_zone]}</Typography>
-        {/* <Typography>{JSON.stringify(user)}</Typography> */}
-      </div>
+    // if (loading) {
+    //   return (
+    //     <div>
+    //       <Typography>Loading...</Typography>
+    //     </div>
+    //   );
+    // }
 
-      {user.current_state === "observing" && (
-        <div id="showEntities">
-          <br />
-          <Typography>Choose an Action:</Typography>
-          <Button onClick={searchForEntities}> Wander</Button>
-          <br />
-          <br />
-          {/* <Typography>{JSON.stringify(spawn)}</Typography> */}
-          <br />
-          <Typography>Current Entities:</Typography>
-          {spawn.map((entity) => (
-            <Button
-              onClick={interactEntity}
-              key={entity.spawn_id}
-              id={entity.spawn_id}
-              value={entity.current_health}
-              // variant="blue"
-            >
-              {entity.name}
-            </Button>
-          ))}
-        </div>
-      )}
+    return (
+        <Container>
+            <div>
+                <Button onClick={returnToWorld}>
+                    {" "}
+                    Travel to a Different Zone{" "}
+                </Button>
+                <br />
+                <br />
+                <Typography>
+                    Current Zone: {zoneIdToName[user.current_zone]}
+                </Typography>
+                {/* <Typography>{JSON.stringify(user)}</Typography> */}
+            </div>
 
-      {user.current_state === "interacting" && <Interaction />}
-    </div>
-  );
+            {user.current_state === "observing" && (
+                <div id="showEntities">
+                    <br />
+                    <Typography>Choose an Action:</Typography>
+                    <Button onClick={searchForEntities}> Wander</Button>
+                    <br />
+                    <br />
+                    {/* <Typography>{JSON.stringify(spawn)}</Typography> */}
+                    <br />
+                    <Typography>Current Entities:</Typography>
+                    {spawn.map((entity) => (
+                        <Button
+                            onClick={interactEntity}
+                            key={entity.spawn_id}
+                            id={entity.spawn_id}
+                            value={entity.current_health}
+                            // variant="blue"
+                        >
+                            {entity.name}
+                        </Button>
+                    ))}
+                </div>
+            )}
+
+            {user.current_state === "interacting" && <Interaction />}
+        </Container>
+    );
 };
 
 export default Main;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Button } from "@mui/material";
+import { Typography, Button, Container } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -18,12 +18,12 @@ const Defeated = () => {
     };
 
     return (
-        <div>
+        <Container>
             <Typography>You were defeated...</Typography>
             <br />
             <br />
             <Button onClick={returnToTheWorld}> Return to the World! </Button>
-        </div>
+        </Container>
     );
 };
 
