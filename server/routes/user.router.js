@@ -141,11 +141,11 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
 
 const calculateMaxHealth = async (playerId, db) => {
   const sqlFetchHealthItems = `
-  SELECT equipped.quantity, equipped.user_id, item.type, item.value, item.ATTRIBUTE
-  FROM "user", equipped, item
+  SELECT equipped.quantity, equipped.user_id, "item".type, "item".value, "item".attribute, "item".name
+  FROM "user", equipped, "item"
   WHERE 
 	equipped.user_id = "user".id
-	AND item.id = "user".id
+	AND "equipped".item_id = "item".id
 	AND "user".id = $1;
   `;
 
