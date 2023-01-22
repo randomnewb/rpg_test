@@ -77,13 +77,15 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
 
       await db.query(sql, ["observing", req.user.id, null]);
 
+      const calculatedMaxHealth = await calculateMaxHealth(req.user.id, db);
+
       const sql2 = `
             UPDATE "stat"
-            SET health = max_health
+            SET health = $2
             WHERE "stat".user_id = $1;
             `;
 
-      await db.query(sql2, [req.user.id]);
+      await db.query(sql2, [req.user.id, calculatedMaxHealth]);
 
       await db.query("COMMIT");
 
@@ -134,6 +136,44 @@ router.put("/state", rejectUnauthenticated, async (req, res) => {
     }
   }
 });
+
+// Don't forget to add max_health to the equation
+
+const calculateMaxHealth = async (playerId, db) => {
+  const sqlFetchHealthItems = `
+  SELECT equipped.quantity, equipped.user_id, item.type, item.value, item.ATTRIBUTE
+  FROM "user", equipped, item
+  WHERE 
+	equipped.user_id = "user".id
+	AND item.id = "user".id
+	AND "user".id = $1;
+  `;
+
+  const itemHealth = await db.query(sqlFetchHealthItems, [playerId]);
+
+  let item = itemHealth.rows;
+  let healthResult = 0;
+
+  for (let i = 0; i < item.length; i++) {
+    if (item[i].attribute === "health") {
+      healthResult += item[i].quantity * item[i].value;
+    }
+  }
+
+  const sqlUserBaseMaxHealth = `
+  SELECT user_id, max_health
+  FROM stat
+  WHERE user_id=$1;
+  `;
+
+  const userBaseMaxHealth = await db.query(sqlUserBaseMaxHealth, [playerId]);
+
+  let baseMaxHealth = userBaseMaxHealth.rows[0].max_health;
+
+  let combinedHealth = baseMaxHealth + healthResult;
+
+  return combinedHealth;
+};
 
 // Perform a check to see if the entity still exists
 
