@@ -3,33 +3,54 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button, Typography, Container } from "@mui/material";
 
 const Character = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const user = useSelector((store) => store.user);
-    const stat = useSelector((store) => store.stat);
+  const user = useSelector((store) => store.user);
+  const stat = useSelector((store) => store.stat);
+  const equip = useSelector((store) => store.equipped);
 
-    useEffect(() => {
-        dispatch({ type: "FETCH_USER_STAT" });
-    }, []);
+  /**
+   * Max Health Calculation
+   */
 
-    return (
-        <Container>
-            <Typography>Name: {stat.name}</Typography>
-            <Typography>Class: {stat.class} </Typography>
-            <Typography>Level: {stat.level}</Typography>
-            <Typography>Experience: {stat.experience} </Typography>
-            <Typography>Health: {stat.max_health}</Typography>
-            <Typography>Mana: {stat.max_mana}</Typography>
-            <Typography>Stamina: {stat.max_stamina}</Typography>
-            <Typography>Armor: {stat.armor} </Typography>
-            <Typography>
-                Damage: {stat.min_damage} - {stat.max_damage}
-            </Typography>
-            <Typography>Strength: {stat.strength} </Typography>
-            <Typography>Dexterity: {stat.dexterity} </Typography>
-            <Typography>Wisdom: {stat.wisdom} </Typography>
-        </Container>
-    );
+  let item = equip;
+  let healthResult = 0;
+
+  for (let i = 0; i < item.length; i++) {
+    if (item[i].attribute === "health") {
+      healthResult += item[i].quantity * item[i].value;
+    }
+  }
+  let baseMaxHealth = stat.max_health;
+  let baseStrength = stat.strength;
+
+  let combinedHealth =
+    baseMaxHealth + Math.floor(baseStrength / 3) + healthResult;
+
+  useEffect(() => {
+    dispatch({ type: "FETCH_USER_STAT" });
+    dispatch({ type: "FETCH_USER_EQUIPMENT" });
+  }, []);
+
+  return (
+    <Container>
+      {/* <Typography>{JSON.stringify(equip)}</Typography> */}
+      <Typography>Name: {stat.name}</Typography>
+      <Typography>Class: {stat.class} </Typography>
+      <Typography>Level: {stat.level}</Typography>
+      <Typography>Experience: {stat.experience} </Typography>
+      <Typography>Health: {combinedHealth}</Typography>
+      <Typography>Mana: {stat.max_mana}</Typography>
+      <Typography>Stamina: {stat.max_stamina}</Typography>
+      <Typography>Armor: {stat.armor} </Typography>
+      <Typography>
+        Damage: {stat.min_damage} - {stat.max_damage}
+      </Typography>
+      <Typography>Strength: {stat.strength} </Typography>
+      <Typography>Dexterity: {stat.dexterity} </Typography>
+      <Typography>Wisdom: {stat.wisdom} </Typography>
+    </Container>
+  );
 };
 
 export default Character;

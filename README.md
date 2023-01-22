@@ -149,6 +149,8 @@ Directory Structure:
      -  Implement items in inventory granting bonuses or changes to player's stats
      -  Using equipped table information (GET), apply item bonuses where relevant
     [x] Implement health items applying their bonus when the player is revived after losing
+    [x] Update Character sheet with potential combined stats
+        - Health coming from base max_health, equipped items, Strength (1 HP/3 STR)
     [ ] Implement other stats and items applying their bonus where relevant
 
     [ ] Implement enemies with armor

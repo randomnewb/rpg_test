@@ -160,17 +160,21 @@ const calculateMaxHealth = async (playerId, db) => {
     }
   }
 
-  const sqlUserBaseMaxHealth = `
-  SELECT user_id, max_health
+  const sqlUserBaseStrengthMaxHealth = `
+  SELECT user_id, strength, max_health
   FROM stat
   WHERE user_id=$1;
   `;
 
-  const userBaseMaxHealth = await db.query(sqlUserBaseMaxHealth, [playerId]);
+  const userBaseStats = await db.query(sqlUserBaseStrengthMaxHealth, [
+    playerId,
+  ]);
 
-  let baseMaxHealth = userBaseMaxHealth.rows[0].max_health;
+  let baseMaxHealth = userBaseStats.rows[0].max_health;
+  let baseStrength = userBaseStats.rows[0].strength;
 
-  let combinedHealth = baseMaxHealth + healthResult;
+  let combinedHealth =
+    baseMaxHealth + Math.floor(baseStrength / 3) + healthResult;
 
   return combinedHealth;
 };
