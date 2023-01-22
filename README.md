@@ -151,6 +151,42 @@ Directory Structure:
     [x] Implement health items applying their bonus when the player is revived after losing
     [x] Update Character sheet with potential combined stats
         - Health coming from base max_health, equipped items, Strength (1 HP/3 STR)
+
+    Strength implementations
+    [ ] Implement Strength increasing flat MELEE damage (1 min & max damage/5 STR)
+        - During damage calculation
+        - No difference between MELEE and RANGED damage yet
+    [ ] Implement Strength increasing max_stamina (1 Stamina/3 STR)
+        - During entity interaction
+    [ ] Implement Strength increasing armor (1 armor/5 STR)
+        - During damage calculation
+    [ ] Update character sheet with appropriate strength bonuses
+
+    Dexterity implementations
+    [ ] Implement Dexterity increasing dodge chance (2% dodge chance/4 DEX)
+        - DODGE not yet implemented
+    [ ] Implement Dexterity increasing flat RANGED damage (1 min & max damage/5 DEX)
+        - RANGED damage not yet implemented
+        - No difference between MELEE and RANGED damage yet
+    [ ] Implement Dexterity increasing CRITICAL damage chance (1% for 1.5x damage/5 DEX)
+        - CRITICAL DAMAGE and CHANCE not yet implemented
+    [ ] Implement Dexterity decreasing stamina use (1% decrease/5 DEX)
+        - Stamina system not yet implemented
+        - Stamina decrease can not be lower than 1
+    [ ] Update character sheet with appropriate dexterity bonuses
+
+    Wisdom implementations
+    [ ] Implement Wisdom increasing max Mana (1 mana/3 WIS)
+        - Mana not yet implemented
+    [ ] Implement Wisdom increasing flat MAGIC damage (1 min & max/5 WIS)
+        - MAGIC damage not yet implemented
+    [ ] Implement Wisdom increasing resistance (1% increase/5 WIS)
+        - Resistance not yet implemented
+
+    [ ] Implement New Action: Focus
+        - Generates mana on use
+        - Amount of mana generated is based on WIS (such as 1 mana/5 WIS) and other parameters
+
     [ ] Implement other stats and items applying their bonus where relevant
 
     [ ] Implement enemies with armor
