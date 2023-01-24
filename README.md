@@ -152,6 +152,36 @@ Directory Structure:
     [x] Update Character sheet with potential combined stats
         - Health coming from base max_health, equipped items, Strength (1 HP/3 STR)
 
+    [ ] Implement different types of damage (add to stat table)
+        - min_ and max_damage for entities
+        - damage_type (array of types for entities)
+        - for players, items can provide
+            - min_ and max_damage
+                - comes from equipped weapon
+                - also from items (but must have an equipped item)
+                - also from stats
+            - single or multiple types
+                - melee, ranged, physical, digital, fire, ice, nature, thunder, dark, holy
+
+    [ ] Provide starter gear depending on class
+        -   Brute
+            -   Wooden Bat
+            -   PHYSICAL
+            -   MELEE
+            -   1 - 3 DAMAGE
+
+        -   Sureshot
+            -   Slingshot
+            -   PHYSICAL
+            -   RANGED
+            -   1 - 3 DAMAGE
+
+        -   Arcanist
+            -   Calculator
+            -   DIGITAL
+            -   RANGED
+            -   1 - 3 DAMAGE
+
     Strength implementations
     [ ] Implement Strength increasing flat MELEE damage (1 min & max damage/5 STR)
         - During damage calculation
@@ -178,8 +208,8 @@ Directory Structure:
     Wisdom implementations
     [ ] Implement Wisdom increasing max Mana (1 mana/3 WIS)
         - Mana not yet implemented
-    [ ] Implement Wisdom increasing flat MAGIC damage (1 min & max/5 WIS)
-        - MAGIC damage not yet implemented
+    [ ] Implement Wisdom increasing flat DIGITAL damage (1 min & max/5 WIS)
+        - DIGITAL damage not yet implemented
     [ ] Implement Wisdom increasing resistance (1% increase/5 WIS)
         - Resistance not yet implemented
 
@@ -190,6 +220,6 @@ Directory Structure:
     [ ] Implement other stats and items applying their bonus where relevant
 
     [ ] Implement enemies with armor
-    [ ] Implement enemies with types of resistances
+    [ ] Implement enemies with types of resistances (and weaknesses)
 
 ## Possible Problems
