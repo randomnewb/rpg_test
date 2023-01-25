@@ -15,12 +15,27 @@ const Character = () => {
 
   let item = equip;
   let healthResult = 0;
+  let strengthResult = 0;
+  let dexterityResult = 0;
+  let wisdomResult = 0;
   let min_damage = 0;
   let max_damage = 0;
 
   for (let i = 0; i < item.length; i++) {
     if (item[i].attribute === "health") {
       healthResult += item[i].quantity * item[i].value;
+    }
+
+    if (item[i].attribute === "strength") {
+      strengthResult += item[i].quantity * item[i].value;
+    }
+
+    if (item[i].attribute === "dexterity") {
+      dexterityResult += item[i].quantity * item[i].value;
+    }
+
+    if (item[i].attribute === "wisdom") {
+      wisdomResult += item[i].quantity * item[i].value;
     }
 
     if (item[i].type === "weapon") {
@@ -33,6 +48,10 @@ const Character = () => {
 
   let combinedHealth =
     baseMaxHealth + Math.floor(baseStrength / 3) + healthResult;
+
+  let combinedStrength = stat.strength + strengthResult;
+  let combinedDexterity = stat.dexterity + dexterityResult;
+  let combinedWisdom = stat.wisdom + wisdomResult;
 
   useEffect(() => {
     dispatch({ type: "FETCH_USER_STAT" });
@@ -53,9 +72,9 @@ const Character = () => {
       <Typography>
         Damage: {min_damage} - {max_damage}
       </Typography>
-      <Typography>Strength: {stat.strength} </Typography>
-      <Typography>Dexterity: {stat.dexterity} </Typography>
-      <Typography>Wisdom: {stat.wisdom} </Typography>
+      <Typography>Strength: {combinedStrength} </Typography>
+      <Typography>Dexterity: {combinedDexterity} </Typography>
+      <Typography>Wisdom: {combinedWisdom} </Typography>
     </Container>
   );
 };

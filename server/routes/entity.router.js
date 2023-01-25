@@ -215,7 +215,7 @@ const performDamageCalculation = async (
   let min_damage = 0;
   let max_damage = 0;
 
-  for (let i = 0; equipment.length; i++) {
+  for (let i = 0; i < equipment.length; i++) {
     if (equipment[i].type === "weapon") {
       min_damage = equipment[i].min_damage;
       max_damage = equipment[i].max_damage;
