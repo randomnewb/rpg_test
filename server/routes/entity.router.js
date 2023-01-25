@@ -96,12 +96,14 @@ router.put("/:id", async (req, res) => {
 
           // Get the stats of the player
           const playerStats = await getPlayerStats(req.user.id, db);
+          const playerEquipment = await getPlayerEquipment(req.user.id, db);
 
           // Perform the damage calculation
           const damageCalculation = await performDamageCalculation(
             req.params.id,
             playerStats,
             healthOfEntity,
+            playerEquipment,
             db
           );
           // If after the damage calculation, the entity has no more health
@@ -200,6 +202,7 @@ const performDamageCalculation = async (
   entityId,
   playerStats,
   entityHealth,
+  playerEquipment,
   db
 ) => {
   function randomNumber(min, max) {
@@ -208,10 +211,18 @@ const performDamageCalculation = async (
     return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
   }
 
-  let playerDamage = randomNumber(
-    playerStats.min_damage,
-    playerStats.max_damage
-  );
+  let equipment = playerEquipment;
+  let min_damage = 0;
+  let max_damage = 0;
+
+  for (let i = 0; equipment.length; i++) {
+    if (equipment[i].type === "weapon") {
+      min_damage = equipment[i].min_damage;
+      max_damage = equipment[i].max_damage;
+    }
+  }
+
+  let playerDamage = randomNumber(min_damage, max_damage);
 
   entityId = parseInt(entityId);
 
@@ -328,6 +339,29 @@ const getPlayerStats = async (playerId, db) => {
     return checkHealthOfPlayer.rows[0];
   } catch (e) {
     console.log("Couldn't get player's stats", e);
+  }
+};
+
+const getPlayerEquipment = async (playerId, db) => {
+  // Get player's equipment
+
+  try {
+    const sql_getPlayerEquipment = `
+      SELECT equipped.*, item.*
+      FROM "user" , equipped , item 
+      WHERE 
+      equipped.user_id = "user".id
+      AND "user".id = $1
+      AND equipped.item_id = item.id;
+        `;
+
+    const getPlayerEquipment = await db.query(sql_getPlayerEquipment, [
+      playerId,
+    ]);
+
+    return getPlayerEquipment.rows;
+  } catch (e) {
+    console.log("Couldn't get player's equipment", e);
   }
 };
 

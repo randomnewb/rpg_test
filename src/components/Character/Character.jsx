@@ -15,10 +15,17 @@ const Character = () => {
 
   let item = equip;
   let healthResult = 0;
+  let min_damage = 0;
+  let max_damage = 0;
 
   for (let i = 0; i < item.length; i++) {
     if (item[i].attribute === "health") {
       healthResult += item[i].quantity * item[i].value;
+    }
+
+    if (item[i].type === "weapon") {
+      min_damage = item[i].min_damage;
+      max_damage = item[i].max_damage;
     }
   }
   let baseMaxHealth = stat.max_health;
@@ -44,7 +51,7 @@ const Character = () => {
       <Typography>Stamina: {stat.max_stamina}</Typography>
       <Typography>Armor: {stat.armor} </Typography>
       <Typography>
-        Damage: {stat.min_damage} - {stat.max_damage}
+        Damage: {min_damage} - {max_damage}
       </Typography>
       <Typography>Strength: {stat.strength} </Typography>
       <Typography>Dexterity: {stat.dexterity} </Typography>

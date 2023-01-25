@@ -19,6 +19,7 @@ CREATE TABLE "stat" (
 	"name" VARCHAR (255),
 	"class" VARCHAR (255), 
 	"type" VARCHAR (255),
+	"damage_type" text[],
 	"rarity" INT DEFAULT 1,
 	"level" INT DEFAULT 0,
 	"experience" INT DEFAULT 0,

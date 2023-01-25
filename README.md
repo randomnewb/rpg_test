@@ -83,9 +83,8 @@ Directory Structure:
         1. Many-to-many table where users have access to zones and zones have a linked user_id
         1. Players are given explicit access to zones and this is stored in something like an array
     [ ] Postman/route tester - people are still able to make requests rapidly via this method
-
     [ ] Add image to stat table and to item table which will be the svg/image of the entry?
-    [ ] Optionally add a victorious current_state where
+    [ ] Add a victorious current_state where
             user can see and confirm reward after successful interaction with entity
     [ ] Setup a log/narrator
     [ ] MP/Stamina System
@@ -144,15 +143,7 @@ Directory Structure:
 
 ## Working on
 
-    [x] GET player's stats, which include damage, during interaction step
-    [x] Use this variable damage for the damage calculation
-     -  Implement items in inventory granting bonuses or changes to player's stats
-     -  Using equipped table information (GET), apply item bonuses where relevant
-    [x] Implement health items applying their bonus when the player is revived after losing
-    [x] Update Character sheet with potential combined stats
-        - Health coming from base max_health, equipped items, Strength (1 HP/3 STR)
-
-    [ ] Implement different types of damage (add to stat table)
+    [x] Implement different types of damage (add to stat table)
         - min_ and max_damage for entities
         - damage_type (array of types for entities)
         - for players, items can provide
@@ -163,24 +154,9 @@ Directory Structure:
             - single or multiple types
                 - melee, ranged, physical, digital, fire, ice, nature, thunder, dark, holy
 
-    [ ] Provide starter gear depending on class
-        -   Brute
-            -   Wooden Bat
-            -   PHYSICAL
-            -   MELEE
-            -   1 - 3 DAMAGE
+    [ ] Implement damage types for entities
 
-        -   Sureshot
-            -   Slingshot
-            -   PHYSICAL
-            -   RANGED
-            -   1 - 3 DAMAGE
-
-        -   Arcanist
-            -   Calculator
-            -   DIGITAL
-            -   RANGED
-            -   1 - 3 DAMAGE
+    [x] Implement weapons providing min_ and max_damage
 
     Strength implementations
     [ ] Implement Strength increasing flat MELEE damage (1 min & max damage/5 STR)
