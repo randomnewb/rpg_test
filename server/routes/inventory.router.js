@@ -70,10 +70,12 @@ router.put("/:id", rejectUnauthenticated, async (req, res) => {
 const checkItem = async (itemId, user, db) => {
   try {
     const sql_checkItem = `
-    SELECT equipped.item_id, equipped.quantity, "user".id
-    FROM  equipped, "user" 
+    SELECT equipped.item_id, equipped.quantity, "user".id, item.*
+    FROM  equipped, "user", item
     WHERE 
-    "user".id = $1
+    equipped.item_id = item.id
+    AND equipped.user_id = "user".id
+    AND"user".id = $1
     AND equipped.item_id = $2;
     `;
 

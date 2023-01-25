@@ -33,8 +33,10 @@ router.put("/:id", rejectUnauthenticated, async (req, res) => {
   const db = await pool.connect();
 
   const itemValid = await checkItem(req.params.id, req.user.id, db);
+  const checkEquipped = await checkEquipment(req.user.id, itemValid, db);
+  // console.log(checkEquipped);
 
-  if (itemValid) {
+  if (itemValid && checkEquipped) {
     try {
       await db.query("BEGIN");
 
@@ -67,14 +69,17 @@ router.put("/:id", rejectUnauthenticated, async (req, res) => {
 const checkItem = async (itemId, user, db) => {
   try {
     const sql_checkItem = `
-    SELECT inventory.item_id, inventory.quantity, "user".id
-    FROM  inventory, "user" 
+    SELECT inventory.item_id, inventory.quantity, "user".id, item.*
+    FROM  inventory, "user", item
     WHERE 
-    "user".id = $1
-    AND inventory.item_id = $2;
+    inventory.item_id = item.id
+    AND inventory.user_id = "user".id
+    AND "user".id = $1
+    AND item.id = $2;
     `;
 
     const result = await db.query(sql_checkItem, [user, itemId]);
+
     return result.rows[0];
   } catch (e) {
     console.log(e);
@@ -107,6 +112,36 @@ const removeItem = async (itemId, user, db, itemValid) => {
       await db.query("ROLLBACK");
       console.log(e);
     }
+  }
+};
+
+const checkEquipment = async (user, item, db) => {
+  try {
+    const sql_checkEquipped = `
+    SELECT equipped.item_id, equipped.quantity, "user".id, item.*
+    FROM  equipped, "user", item
+    WHERE 
+    equipped.item_id = item.id
+    AND equipped.user_id = "user".id
+    AND"user".id = $1;
+    `;
+
+    const equipped = await db.query(sql_checkEquipped, [user]);
+
+    let valid = true;
+    let equipment = equipped.rows;
+    if (item.type === "pog") {
+      return valid;
+    }
+
+    for (i = 0; i < equipment.length; i++) {
+      if (item.type === equipment[i].type) {
+        valid = false;
+      }
+    }
+    return valid;
+  } catch (e) {
+    console.log(e);
   }
 };
 

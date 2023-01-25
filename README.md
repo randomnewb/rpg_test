@@ -101,6 +101,7 @@ Directory Structure:
 
 ## Bugs
 
+    [x] Add a check that prevents Player from having more than one weapon equipped (in this case, non-pog equipment)
     [ ] Duping bug?
             - Moving items from equipped can cause the item in equipped to become a negative value
             - The items in the inventory could then be moved back (or in the future duped some other way)
