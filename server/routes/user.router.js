@@ -250,6 +250,30 @@ router.put("/initialize", rejectUnauthenticated, async (req, res) => {
 
     await db.query("COMMIT");
 
+    let item_id = 0;
+
+    switch (req.body.class) {
+      case "Brute":
+        item_id = 6;
+        break;
+      case "Sureshot":
+        item_id = 7;
+        break;
+      case "Arcanist":
+        item_id = 8;
+        break;
+    }
+
+    const sql_setupEquipped = `
+    INSERT INTO equipped
+    (item_id, user_id, quantity)
+    VALUES($2, $1, 1);
+    `;
+
+    await db.query(sql_setupEquipped, [req.user.id, item_id]);
+
+    await db.query("COMMIT");
+
     const sql_setupInventory = `
     INSERT INTO inventory
     (item_id, user_id, quantity)

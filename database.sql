@@ -47,7 +47,10 @@ CREATE TABLE "item" (
 	"attribute" varchar (255),
 	"type" varchar(255),
 	"equippable" boolean,
-	"value" INT
+	"value" INT,
+	"damage_type" text[],
+	"min_damage" INT,
+	"max_damage" INT
 );
 
 CREATE TABLE "stat_item" (
@@ -129,9 +132,15 @@ VALUES (1, 1, 85), (1, 2, 60), (2, 1, 85), (2, 3, 60);
 -- 5: Lint
 
 INSERT INTO "item" ("name", "attribute", "value", "type", "equippable")
-VALUES ('Heartstone', 'health', 1, 'pog', TRUE), ('Protein Powder', 'strength', 1, 'pog', TRUE), ('Root', 'wisdom', 1, 'pog', TRUE), ('Not a Coin', 'experience', 1, 'experience', FALSE), ('Lint', 'miscellaneous', 1, 'pog', FALSE);
+VALUES ('Heartstone', 'health', 1, 'pog', TRUE), ('Protein Powder', 'strength', 1, 'pog', TRUE), 
+('Root', 'wisdom', 1, 'pog', TRUE), ('Not a Coin', 'experience', 1, 'experience', FALSE), ('Lint', 'miscellaneous', 1, 'pog', FALSE);
+
+INSERT INTO "item" ("name", "type", "damage_type", "min_damage", "max_damage", "equippable")
+VALUES ('Wooden Bat', 'weapon', '{"physical", "melee"}', 1, 3, TRUE), ('Slingshot', 'weapon', '{"physical", "ranged"}', 1, 3, TRUE), 
+('Calculator', 'weapon', '{"digital", "ranged"}', 1, 3, TRUE);
 
 -- Create the item/entity table (loot table)
 
 INSERT INTO "stat_item" ("stat_id", "item_id", "rate")
 VALUES (1, 2, 50), (1, 4, 75), (2, 3, 50), (2, 4, 75), (3, 1, 50), (3, 4, 75);
+	
