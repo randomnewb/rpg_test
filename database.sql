@@ -144,4 +144,3 @@ VALUES ('Wooden Bat', 'weapon', '{"physical", "melee"}', 1, 3, TRUE), ('Slingsho
 
 INSERT INTO "stat_item" ("stat_id", "item_id", "rate")
 VALUES (1, 2, 50), (1, 4, 75), (2, 3, 50), (2, 4, 75), (3, 1, 50), (3, 4, 75);
-	

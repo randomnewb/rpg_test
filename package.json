@@ -1,6 +1,6 @@
 {
   "name": "rpg-app",
-  "version": "0.1.4.2",
+  "version": "0.1.4.5",
   "private": true,
   "proxy": "http://localhost:5000",
   "engines": {
